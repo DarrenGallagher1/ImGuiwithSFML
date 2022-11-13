@@ -5,10 +5,22 @@
 #include "imgui-SFML.h"
 #include "SFML/Graphics.hpp"
 
+bool testMenu = false;
+bool move = false;
+
 int main() {
-    sf::RenderWindow window(sf::VideoMode(640, 480), "ImGui + SFML = <3");
+    sf::RenderWindow window(sf::VideoMode(640, 480), "ImGui + SFML");
     window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
+
+
+    sf::Texture texture;
+    texture.loadFromFile("Santa1.png");
+    sf::Sprite img;
+    img.setTexture(texture);
+    img.setScale(0.15, 0.15);
+    
+    
 
     sf::CircleShape shape(100.f);
     shape.setFillColor(sf::Color::Green);
@@ -27,8 +39,44 @@ int main() {
         ImGui::SFML::Update(window, deltaClock.restart());
 
         ImGui::Begin("Hello, world!");
-        ImGui::Button("Look at this pretty button");
+
+        ImGui::ImageButton(img, 10, sf::Color::White);
+
+        if (ImGui::Button("Look at this pretty button")) {
+            shape.setRadius(10.f);
+        }
+        
+
+        if (ImGui::Button("Test Button")) {
+            testMenu = !testMenu;
+        }
+
+        if (testMenu) {
+            ImGui::Begin("Test Menu");
+            if (ImGui::Button("Appears on test")) {
+                move = !move;
+            }
+
+            if (ImGui::Button("Close")) {
+                window.close();
+            }
+        }
+        else {
+            ImGui::End();
+        }
+
         ImGui::End();
+
+        if (testMenu) {
+            shape.setFillColor(sf::Color::Blue);
+        }
+        else {
+            shape.setFillColor(sf::Color::Green);
+        }
+
+        if (move) {
+            shape.move(0.f, 1.f);
+        }
 
         window.clear();
         window.draw(shape);
