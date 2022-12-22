@@ -2,7 +2,6 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "SFML/Graphics.hpp"
-#include "Player.h"
 
 class Platform
 {
@@ -32,7 +31,6 @@ public:
 	void movePlatformX(float pointA, float pointB);
 	sf::FloatRect getBounds();
 	bool getDirection();
-	void anchorPlayer(Player& knight);
 
 	Platform(float posx, float posy, float height, float width, sf::Color colour) {
 		setSize(width, height);

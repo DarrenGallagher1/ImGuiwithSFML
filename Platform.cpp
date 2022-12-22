@@ -71,13 +71,3 @@ bool Platform::getDirection() {
 	return direction;
 }
 
-void Platform::anchorPlayer(Player& knight) {
-	if (platform.getGlobalBounds().intersects(knight.getShape().getGlobalBounds()) && knight.getVelY() >= 0) {
-		knight.setGroundHeight(posy - knight.getHeight() + 1.f);
-		knight.setIndirVelX(velx);
-	}
-	else {
-		knight.setGroundHeight(720.f - knight.getHeight());
-		knight.setIndirVelX(0.f);
-	}
-}

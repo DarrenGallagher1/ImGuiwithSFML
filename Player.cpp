@@ -26,8 +26,16 @@ float Player::getHeight() {
 	return height;
 }
 
+float Player::getGroundHeight() {
+	return this->groundHeight;
+}
+
 void Player::setColour(sf::Color colour) {
 	this->colour = colour;
+}
+
+void Player::setShapeColour(sf::Color colour) {
+	rect.setFillColor(colour);
 }
 
 void Player::setShape() {
@@ -66,15 +74,17 @@ void Player::setGrappleVelocity(float velx, float vely) {
 void Player::jump() {
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && vely == 0 && lift == true) {
-		vely = -20.f;
+		vely = -15.f;
 		lift = false;
+		onLedge = false;
+		indirVelX = 0.f;
 	}
 
-	if (posy < (groundHeight)) {
+	if (posy < (this->groundHeight)) {
 		vely += gravity;
 	}
-	else if (posy > (groundHeight)) {
-		posy = groundHeight;
+	else if (posy > (this->groundHeight)) {
+		posy = this->groundHeight;
 		vely = 0;
 		lift = true;
 	}
@@ -124,4 +134,23 @@ void Player::setVelY(float vely) {
 
 float Player::getVelX() {
 	return velx;
+}
+
+bool Player::getOnLedge() {
+	return this->onLedge;
+}
+
+void Player::setOnLedge(bool onLedge) {
+	this->onLedge = onLedge;
+}
+
+void Player::anchor() {
+	if (onLedge) {
+		vely = 0.f;
+		gravity = 0.f;
+	} else {
+		setGroundHeight(720.f - height);
+		setIndirVelX(0.f);
+		gravity = 0.8;
+	}
 }
