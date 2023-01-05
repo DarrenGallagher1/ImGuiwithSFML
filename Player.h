@@ -8,28 +8,33 @@
 class Player
 {
 private:
-	float posx;
+	
+	const float SCREENWIDTH = 1080.f;
+	const float SCREENHEIGHT = 720.f;
 	float posy;
 	float height;
 	float width;
-	float velx;
+
 	float vely;
 	float indirVelX = 0.f;
 	float gravity = 0.8;
 	float upGravity = -0.8;
 	float downGravity = 0.8;
-	float groundHeight = 720.f;
+	float groundHeight;
 	bool lift = true;
 	bool onLedge = false;
 	bool anchored;
-	sf::Color colour;
+	sf::Color colour, borderColor;
 	sf::RectangleShape rect;
-	
 
 public:
 
+	bool cangrapple;
+	bool grappletopoint;
+	bool shot;
 	float distancex;
 	float distancey;
+	float distance;
 	float bulletdistancex;
 	float bulletdistancey;
 	float ndistancex;
@@ -38,10 +43,14 @@ public:
 	float bulletInverseDistance;
 	float accelx, accely;
 	sf::RectangleShape bullet;
-	std::vector<sf::RectangleShape> bullets;
-	std::vector<float> bulletsVelX;
-	std::vector<float> bulletsVelY;
-
+	float bulletsVelX;
+	float bulletsVelY;
+	sf::RectangleShape topBound;
+	sf::RectangleShape leftBound;
+	sf::RectangleShape rightBound;
+	sf::RectangleShape bottomBound;
+	float velx;
+	float posx;
 
 	void setPosition(float x, float y);
 	float getPositionX();
@@ -70,14 +79,27 @@ public:
 	void setIndirVelX(float vel);
 	bool getOnLedge();
 	void setOnLedge(bool onLedge);
-	void anchor();
+	void anchor(Platform platform);
 	void setShapeColour(sf::Color colour);
+	void grapple(Platform &grapplePoint, float direction);
+	void shoot(Platform ledges[], int arraysize, sf::RenderWindow& window);
+	void checkBounds(Platform ledges[], int arraysize);
 
 	Player(float posx, float posy, float width, float height, sf::Color colour) {
 		setPosition(posx, posy);
 		setSize(width, height);
 		setColour(colour);
 		setShape();
+		rect.setOrigin({ rect.getGlobalBounds().width / 2, rect.getGlobalBounds().height / 2 });
+		topBound.setSize({ rect.getGlobalBounds().width - 2.f, 5.f });
+		bottomBound.setSize({ rect.getGlobalBounds().width - 10.f, 5.f });
+		leftBound.setSize({ 5.f, rect.getGlobalBounds().height - 20.f });
+		rightBound.setSize({ 5.f, rect.getGlobalBounds().height - 20.f });
+		topBound.setFillColor(sf::Color::White);
+		leftBound.setFillColor(sf::Color::White);
+		rightBound.setFillColor(sf::Color::White);
+		bottomBound.setFillColor(sf::Color::White);
+		bullet.setFillColor(sf::Color::Transparent);
 	}
 };
 
