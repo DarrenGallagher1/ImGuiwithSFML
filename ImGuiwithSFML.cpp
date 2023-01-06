@@ -12,22 +12,9 @@ const float SCREENWIDTH = 1080.f;
 const float SCREENHEIGHT = 720.f;
 bool testMenu = false;
 bool move = true;
-bool cangrapple;
-bool grappletopoint;
-bool anchor = false;
 bool pause = false;
 bool yellow = false;
-int blueColour = 0, greenColour = 0, redColour = 0;
-float radius = 0.f;
-float groundHeight = SCREENHEIGHT - 10.f;
-float posx = SCREENWIDTH / 2;
-float posy = SCREENHEIGHT;
-float velx;
-float vely;
 float direction;
-float grappleTime = 0.f;
-
-
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), "ImGui + SFML");
@@ -43,15 +30,15 @@ int main() {
 
     //represents player
     Player dwarf(500.f, 700.f, 50.f, 40.f, sf::Color::Blue);
-    
+
     Platform ledge(400.f, 550.f, 100.f, 400.f, sf::Color::White);
     Platform ledge2(300.f, 600.f, 100.f, 400.f, sf::Color::White);
     Platform ledge3(700.f, 400.f, 100.f, 400.f, sf::Color::White);
     Platform ledge4(0.f, 720.f - 40.f, 1080.f, 40.f, sf::Color::White);
     Platform ledge5(1000.f, 0.f, 40.f, 720.f, sf::Color::White);
-    Platform grapplePoint(540.f, 360.f, 10.f, 10.f, sf::Color::Yellow);
+    Platform grapplePoint(540.f, 360.f, 5.f, 5.f, sf::Color::Yellow);
 
-    Platform ledges[5] = {ledge, ledge2, ledge3, ledge4, ledge5};
+    Platform ledges[5] = { ledge, ledge2, ledge3, ledge4, ledge5 };
 
     sf::CircleShape target;
     target.setRadius(150.f);
@@ -71,7 +58,7 @@ int main() {
             }
 
             if (event.type == sf::Event::MouseButtonPressed && dwarf.bullet.getFillColor() == sf::Color::Transparent) {
-                if (event.mouseButton.button == sf::Mouse::Right) {
+                if (event.mouseButton.button == sf::Mouse::Right && sf::Mouse::getPosition(window).x > dwarf.getPositionX()) {
                     dwarf.shot = true;
                 }
             }
@@ -89,7 +76,7 @@ int main() {
 
             window.clear();
 
-            dwarf.setOnLedge(false);
+            //dwarf.setOnLedge(false);
 
             ledges[0].movePlatformX(300.f, 600.f);
 
@@ -138,52 +125,28 @@ int main() {
         }
 
         if (pause) {
-            sf::RenderWindow window2(sf::VideoMode(500.f, 500.f), "Menu");
 
-            while (window2.isOpen()) {
-                sf::Event event;
+            window.clear();
 
-                while (window2.pollEvent(event)) {
-                    ImGui::SFML::ProcessEvent(window, event);
+            target.setPosition(250.f, 250.f);
+            target.setFillColor(sf::Color::Cyan);
 
-                    if (event.type == sf::Event::Closed) {
-                        window2.close();
-                    }
+            sf::Vector2i position = sf::Mouse::getPosition(window);
+            sf::Vector2f tracker = window.mapPixelToCoords(position);
 
-                    if (event.type == sf::Event::MouseButtonPressed) {
-                        if (event.mouseButton.button == sf::Mouse::Right) {
-                            dwarf.shot = true;
-                        }
-                    }
-
-                    if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Enter) {
-                        window2.close();
-                        pause = !pause;
-                    }
-
-                }
-
-                window2.clear();
-
-                target.setPosition(250.f, 250.f);
-                target.setFillColor(sf::Color::Cyan);
-
-                sf::Vector2i position = sf::Mouse::getPosition(window2);
-                sf::Vector2f tracker = window2.mapPixelToCoords(position);
-
-                if (target.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                    yellow = true;
-                }
-
-                if (target.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-                    yellow = false;
-                }
-
-                window2.draw(target);
-                window2.display();
+            if (target.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                yellow = true;
             }
+
+            if (target.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+                yellow = false;
+            }
+
+            window.draw(target);
+            window.display();
         }
     }
+
     
     ImGui::SFML::Shutdown();
 }

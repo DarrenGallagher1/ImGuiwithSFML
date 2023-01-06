@@ -14,12 +14,11 @@ private:
 	float posy;
 	float height;
 	float width;
-
 	float vely;
 	float indirVelX = 0.f;
-	float gravity = 0.8;
-	float upGravity = -0.8;
-	float downGravity = 0.8;
+	float gravity = 0.5;
+	float upGravity = -0.7;
+	float downGravity = 0.7;
 	float groundHeight;
 	bool lift = true;
 	bool onLedge = false;
@@ -95,10 +94,10 @@ public:
 		bottomBound.setSize({ rect.getGlobalBounds().width - 10.f, 5.f });
 		leftBound.setSize({ 5.f, rect.getGlobalBounds().height - 20.f });
 		rightBound.setSize({ 5.f, rect.getGlobalBounds().height - 20.f });
-		topBound.setFillColor(sf::Color::White);
-		leftBound.setFillColor(sf::Color::White);
-		rightBound.setFillColor(sf::Color::White);
-		bottomBound.setFillColor(sf::Color::White);
+		topBound.setFillColor(sf::Color::Transparent);
+		leftBound.setFillColor(sf::Color::Transparent);
+		rightBound.setFillColor(sf::Color::Transparent);
+		bottomBound.setFillColor(sf::Color::Transparent);
 		bullet.setFillColor(sf::Color::Transparent);
 	}
 };
