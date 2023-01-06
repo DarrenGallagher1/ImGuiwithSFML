@@ -90,19 +90,19 @@ public:
 	void shoot(Platform ledges[], int arraysize, sf::RenderWindow& window);
 	void checkBounds(Platform ledges[], int arraysize);
 
-	Player(float posx, float posy, float width, float height) {
+	Player(float posx, float posy, float width, float height, std::string fileName) {
 		setPosition(posx, posy);
 		setSize(width, height);
-		animation.setFileName("dwarves.png");
+		animation.setFileName(fileName);
 		animation.setAnimation(0, 0, width, height, 300);
 		setTexture();
 		rect.setTexture(&texture);
 		setShape();
 		rect.setOrigin({ rect.getGlobalBounds().width / 2, rect.getGlobalBounds().height / 2 });
-		topBound.setSize({ rect.getGlobalBounds().width - 2.f, 5.f });
-		bottomBound.setSize({ rect.getGlobalBounds().width - 10.f, 5.f });
-		leftBound.setSize({ 5.f, rect.getGlobalBounds().height - 20.f });
-		rightBound.setSize({ 5.f, rect.getGlobalBounds().height - 20.f });
+		topBound.setSize({ rect.getGlobalBounds().width / 2 - 2.f, 5.f });
+		bottomBound.setSize({ rect.getGlobalBounds().width / 2 - 10.f, 5.f });
+		leftBound.setSize({ 5.f, rect.getGlobalBounds().height / 2 });
+		rightBound.setSize({ 5.f, rect.getGlobalBounds().height / 2 });
 		topBound.setFillColor(sf::Color::White);
 		leftBound.setFillColor(sf::Color::White);
 		rightBound.setFillColor(sf::Color::White);

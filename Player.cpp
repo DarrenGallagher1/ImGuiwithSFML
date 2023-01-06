@@ -105,10 +105,10 @@ void Player::movePlayer() {
 	posx += velx;
 	posy += vely;
 	rect.setPosition({ posx, posy });
-	topBound.setPosition({ posx - rect.getGlobalBounds().width / 2 + 1.f, posy - rect.getGlobalBounds().height / 2});
-	leftBound.setPosition({ posx - rect.getGlobalBounds().width / 2 - leftBound.getGlobalBounds().width, posy - rect.getGlobalBounds().height / 2 + 10.f});
-	rightBound.setPosition({ posx + rect.getGlobalBounds().width / 2, posy - rect.getGlobalBounds().height / 2 + 10.f});
-	bottomBound.setPosition({ posx - rect.getGlobalBounds(). width / 2 + 5.f, posy + rect.getGlobalBounds().height / 2 + 1.f});
+	topBound.setPosition({ posx - rect.getGlobalBounds().width / 4 + 1.f, posy - rect.getGlobalBounds().height / 4});
+	leftBound.setPosition({ posx - rect.getGlobalBounds().width / 4 - leftBound.getGlobalBounds().width, posy - rect.getGlobalBounds().height / 4 + 15.f});
+	rightBound.setPosition({ posx + rect.getGlobalBounds().width / 4, posy - rect.getGlobalBounds().height / 4 + 15.f});
+	bottomBound.setPosition({ posx - rect.getGlobalBounds(). width / 4 + 5.f, posy + rect.getGlobalBounds().height / 2 + 1.f});
 }
 
 void Player::draw(sf::RenderWindow& window) {
@@ -186,7 +186,6 @@ void Player::grapple(Platform& grapplePoint, float direction) {
 	float normalisedDistanceX = distancex * inverseDistance;
 	float normalisedDistanceY = distancey * inverseDistance;
 	float dropoff;
-	float dropoffY;
 
 	if (rect.getGlobalBounds().intersects(grapplePoint.getBounds()) && grappletopoint == true) {
 		grappletopoint = false;
@@ -223,7 +222,13 @@ void Player::grapple(Platform& grapplePoint, float direction) {
 void Player::shoot(Platform ledges[], int arraysize, sf::RenderWindow& window) {
 
 	if (shot) {
-		bullet.setPosition((posx + rect.getGlobalBounds().width / 2), posy);
+
+		if (animation.flipped) {
+			bullet.setPosition((posx + rect.getGlobalBounds().width / 2), posy);
+		} else {
+			bullet.setPosition((posx - rect.getGlobalBounds().width / 2), posy);
+		}
+
 		bullet.setSize({ 4.f, 4.f });
 		bullet.setFillColor(sf::Color::White);
 
@@ -263,14 +268,12 @@ void Player::shoot(Platform ledges[], int arraysize, sf::RenderWindow& window) {
 
 void Player::checkBounds(Platform ledges[], int arraysize) {
 	for (int i = 0; i < 5; i++) {
-		if (bottomBound.getGlobalBounds().intersects(ledges[i].getBounds())) {
 
+		if (bottomBound.getGlobalBounds().intersects(ledges[i].getBounds())) {
 			setOnLedge(true);
 			anchor(ledges[i]);
 			break;
-
-		}
-		else {
+		} else {
 			setGroundHeight(SCREENHEIGHT);
 		}
 	}
