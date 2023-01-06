@@ -41,7 +41,6 @@ void Player::setShapeColour(sf::Color colour) {
 void Player::setShape() {
 	rect.setSize({ width, height });
 	rect.setPosition({ posx, posy });
-	rect.setFillColor(colour);
 }
 
 void Player::setGroundHeight(float height) {
@@ -51,9 +50,17 @@ void Player::setGroundHeight(float height) {
 void Player::setVelX() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !cangrapple) {
 		velx = -5.f + indirVelX;
+		animation.startX = 400;
+		animation.endPoint = 900;
+		animation.flipped = false;
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !cangrapple) {
 		velx = 5.f + indirVelX;
+		animation.startX = 400;
+		animation.endPoint = 900;
+		animation.flipped = true;
 	} else {
+		animation.startX = 0;
+		animation.endPoint = 300;
 		velx = indirVelX;
 	}
 
@@ -83,11 +90,13 @@ void Player::jump() {
 		posy = this->groundHeight;
 		vely = 0;
 		lift = true;
+		animation.switchTime = 1.0;
 	}
 
 	if (posy < (this->groundHeight)) {
 		if (vely < 13.f) {
 			vely += gravity;
+			animation.switchTime = 0.3;
 		}
 	}
 }
@@ -285,4 +294,8 @@ void Player::checkBounds(Platform ledges[], int arraysize) {
 			}
 		}
 	}
+}
+
+void Player::setTexture() {
+	texture.loadFromFile(animation.fileName);
 }

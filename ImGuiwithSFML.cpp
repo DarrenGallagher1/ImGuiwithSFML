@@ -29,7 +29,7 @@ int main() {
     img.setScale(0.15, 0.15);
 
     //represents player
-    Player dwarf(500.f, 700.f, 50.f, 40.f, sf::Color::Blue);
+    Player dwarf(500.f, 700.f, 100.f, 80.f);
 
     Platform ledge(400.f, 550.f, 100.f, 400.f, sf::Color::White);
     Platform ledge2(300.f, 600.f, 100.f, 400.f, sf::Color::White);
@@ -58,8 +58,11 @@ int main() {
             }
 
             if (event.type == sf::Event::MouseButtonPressed && dwarf.bullet.getFillColor() == sf::Color::Transparent) {
-                if (event.mouseButton.button == sf::Mouse::Right && sf::Mouse::getPosition(window).x > dwarf.getPositionX()) {
-                    dwarf.shot = true;
+
+                if (!dwarf.animation.flipped) {
+                    if (event.mouseButton.button == sf::Mouse::Right && sf::Mouse::getPosition(window).x > dwarf.getPositionX()) {
+                        dwarf.shot = true;
+                    }
                 }
             }
 
@@ -118,6 +121,8 @@ int main() {
             dwarf.jump();
 
             dwarf.movePlayer();
+
+            dwarf.animation.Animate(dwarf.rect, dwarf.animation.switchTime);
 
             dwarf.draw(window);
 

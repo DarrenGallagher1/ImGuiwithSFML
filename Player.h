@@ -3,7 +3,7 @@
 #include "imgui-SFML.h"
 #include "SFML/Graphics.hpp"
 #include "Platform.h"
-#include <queue>
+#include "Animation.h"
 
 class Player
 {
@@ -23,8 +23,11 @@ private:
 	bool lift = true;
 	bool onLedge = false;
 	bool anchored;
-	sf::Color colour, borderColor;
-	sf::RectangleShape rect;
+	bool walking;
+	sf::Texture texture;
+	sf::Color borderColor;
+	sf::Color colour;
+	
 
 public:
 
@@ -50,6 +53,8 @@ public:
 	sf::RectangleShape bottomBound;
 	float velx;
 	float posx;
+	Animation animation;
+	sf::RectangleShape rect;
 
 	void setPosition(float x, float y);
 	float getPositionX();
@@ -63,6 +68,7 @@ public:
 	bool getAnchor();
 	void setColour(sf::Color colour);
 	void setShape();
+	void setTexture();
 	void setGroundHeight(float height);
 	void setVelX();
 	void setGrappleX(float velx);
@@ -84,20 +90,23 @@ public:
 	void shoot(Platform ledges[], int arraysize, sf::RenderWindow& window);
 	void checkBounds(Platform ledges[], int arraysize);
 
-	Player(float posx, float posy, float width, float height, sf::Color colour) {
+	Player(float posx, float posy, float width, float height) {
 		setPosition(posx, posy);
 		setSize(width, height);
-		setColour(colour);
+		animation.setFileName("dwarves.png");
+		animation.setAnimation(0, 0, width, height, 300);
+		setTexture();
+		rect.setTexture(&texture);
 		setShape();
 		rect.setOrigin({ rect.getGlobalBounds().width / 2, rect.getGlobalBounds().height / 2 });
 		topBound.setSize({ rect.getGlobalBounds().width - 2.f, 5.f });
 		bottomBound.setSize({ rect.getGlobalBounds().width - 10.f, 5.f });
 		leftBound.setSize({ 5.f, rect.getGlobalBounds().height - 20.f });
 		rightBound.setSize({ 5.f, rect.getGlobalBounds().height - 20.f });
-		topBound.setFillColor(sf::Color::Transparent);
-		leftBound.setFillColor(sf::Color::Transparent);
-		rightBound.setFillColor(sf::Color::Transparent);
-		bottomBound.setFillColor(sf::Color::Transparent);
+		topBound.setFillColor(sf::Color::White);
+		leftBound.setFillColor(sf::Color::White);
+		rightBound.setFillColor(sf::Color::White);
+		bottomBound.setFillColor(sf::Color::White);
 		bullet.setFillColor(sf::Color::Transparent);
 	}
 };
