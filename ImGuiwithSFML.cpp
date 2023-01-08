@@ -33,12 +33,14 @@ int main() {
 
     Platform ledge(400.f, 550.f, 100.f, 400.f, sf::Color::White);
     Platform ledge2(300.f, 600.f, 100.f, 400.f, sf::Color::White);
-    Platform ledge3(700.f, 400.f, 100.f, 400.f, sf::Color::White);
+    Platform ledge3(700.f, 550.f, 100.f, 400.f, sf::Color::White);
     Platform ledge4(0.f, 720.f - 40.f, 1080.f, 40.f, sf::Color::White);
     Platform ledge5(1000.f, 0.f, 40.f, 720.f, sf::Color::White);
     Platform grapplePoint(540.f, 360.f, 5.f, 5.f, sf::Color::Yellow);
 
     Platform ledges[5] = { ledge, ledge2, ledge3, ledge4, ledge5 };
+
+    
 
     sf::CircleShape target;
     target.setRadius(150.f);
@@ -82,10 +84,7 @@ int main() {
 
             ImGui::SFML::Update(window, deltaClock.restart());
 
-
             window.clear();
-
-            //dwarf.setOnLedge(false);
 
             ledges[0].movePlatformX(300.f, 600.f);
 
@@ -102,17 +101,21 @@ int main() {
             }
 
             target.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
-            //window.draw(target);
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !dwarf.cangrapple && dwarf.getPositionY() > grapplePoint.getPositionY()) {
+
+                dwarf.checkGrapplePath(ledges, 5, grapplePoint, window);
+
                 dwarf.cangrapple = true;
                 dwarf.grappletopoint = true;
 
                 if (dwarf.getPositionX() > grapplePoint.getPositionX()) {
                     direction = -1.f;
+                    dwarf.animation.flipped = false;
                 }
                 else {
                     direction = 1.f;
+                    dwarf.animation.flipped = true;
                 }
             }
 
@@ -120,17 +123,20 @@ int main() {
 
             window.draw(dwarf.bullet);
 
+            dwarf.jump();
+
             if (dwarf.cangrapple) {
                 dwarf.grapple(grapplePoint, direction);
             }
 
-            dwarf.jump();
-
             dwarf.movePlayer();
 
-            dwarf.animation.Animate(dwarf.rect, dwarf.animation.switchTime);
-
             dwarf.draw(window);
+
+            if (dwarf.grappletopoint) {
+                dwarf.setRope(grapplePoint);
+                dwarf.drawRope(window);
+            }
 
             window.display();
         }
@@ -146,7 +152,7 @@ int main() {
             sf::Vector2f tracker = window.mapPixelToCoords(position);
 
             if (target.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                yellow = true;
+                dwarf.animation.coordinates.top = 160.f;
             }
 
             if (target.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Right)) {

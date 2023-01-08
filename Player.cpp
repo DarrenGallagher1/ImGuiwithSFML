@@ -50,25 +50,15 @@ void Player::setGroundHeight(float height) {
 void Player::setVelX() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !cangrapple) {
 		velx = -5.f + indirVelX;
-		animation.startX = 400;
-		animation.endPoint = 900;
+		animation.setStartEndPoints(400, 900);
 		animation.flipped = false;
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !cangrapple) {
 		velx = 5.f + indirVelX;
-		animation.startX = 400;
-		animation.endPoint = 900;
+		animation.setStartEndPoints(400, 900);
 		animation.flipped = true;
 	} else {
-		animation.startX = 0;
-		animation.endPoint = 300;
+		animation.setStartEndPoints(0, 300);
 		velx = indirVelX;
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
-		gravity = upGravity;
-	}
-	else {
-		gravity = downGravity;
 	}
 }
 
@@ -86,7 +76,7 @@ void Player::jump() {
 		indirVelX = 0.f;
 	}
 
-	else if (posy > (this->groundHeight)) {
+	if (posy > (this->groundHeight)) {
 		posy = this->groundHeight;
 		vely = 0;
 		lift = true;
@@ -112,6 +102,7 @@ void Player::movePlayer() {
 }
 
 void Player::draw(sf::RenderWindow& window) {
+	animation.Animate(rect, animation.switchTime);
 	window.draw(rect);
 	window.draw(topBound);
 	window.draw(leftBound);
@@ -143,10 +134,6 @@ bool Player::getAnchor() {
 	return this->anchored;
 }
 
-void Player::setGrappleX(float velx) {
-	this->velx = velx;
-}
-
 void Player::setVelY(float vely) {
 	this->vely = vely;
 }
@@ -169,8 +156,7 @@ void Player::anchor(Platform platform) {
 		if (getOnLedge()) {
 			setGroundHeight(platform.getPositionY() - rect.getGlobalBounds().height / 2 + 1.f);
 			setIndirVelX(platform.getXVelocity());
-		}
-		else {
+		} else {
 			setIndirVelX(0.f);
 		}
 }
@@ -191,7 +177,6 @@ void Player::grapple(Platform& grapplePoint, float direction) {
 		grappletopoint = false;
 		dropoff = normalisedDistanceX;
 		setVelY(10.f * normalisedDistanceY);
-
 	}
 
 	if (dropoff < 0) {
@@ -212,10 +197,6 @@ void Player::grapple(Platform& grapplePoint, float direction) {
 		setIndirVelX(0.f);
 	}
 
-	if (vely > 13.f) {
-		gravity = 0.f;
-	}
-
 	setPosition((posx + velx), (posy + vely));
 }
 
@@ -224,9 +205,9 @@ void Player::shoot(Platform ledges[], int arraysize, sf::RenderWindow& window) {
 	if (shot) {
 
 		if (animation.flipped) {
-			bullet.setPosition((posx + rect.getGlobalBounds().width / 2), posy);
+			bullet.setPosition((posx + rect.getGlobalBounds().width / 4), posy);
 		} else {
-			bullet.setPosition((posx - rect.getGlobalBounds().width / 2), posy);
+			bullet.setPosition((posx - rect.getGlobalBounds().width / 4), posy);
 		}
 
 		bullet.setSize({ 4.f, 4.f });
@@ -251,18 +232,16 @@ void Player::shoot(Platform ledges[], int arraysize, sf::RenderWindow& window) {
 
 	for (int i = 0; i < arraysize; i++) {
 
-
 		if (bullet.getGlobalBounds().intersects(ledges[i].getBounds())) {
 			bullet.setFillColor(sf::Color::Transparent);
 			break;
 		}
+	}
 
-		if (bullet.getPosition().x > 1080.f ||
-			bullet.getPosition().x < 0.f ||
-			bullet.getPosition().y < 0.f) {
-			bullet.setFillColor(sf::Color::Transparent);
-			break;
-		}
+	if (bullet.getPosition().x > 1080.f ||
+		bullet.getPosition().x < 0.f ||
+		bullet.getPosition().y < 0.f) {
+		bullet.setFillColor(sf::Color::Transparent);
 	}
 }
 
@@ -274,6 +253,7 @@ void Player::checkBounds(Platform ledges[], int arraysize) {
 			anchor(ledges[i]);
 			break;
 		} else {
+			setOnLedge(false);
 			setGroundHeight(SCREENHEIGHT);
 		}
 	}
@@ -301,4 +281,55 @@ void Player::checkBounds(Platform ledges[], int arraysize) {
 
 void Player::setTexture() {
 	texture.loadFromFile(animation.fileName);
+}
+
+void Player::setRope(Platform grapplePoint) {
+	rope[0].position = sf::Vector2f(posx, posy);
+	rope[0].color = sf::Color::Red;
+	rope[1].position = sf::Vector2f(grapplePoint.getPositionX(), grapplePoint.getPositionY());
+	rope[1].color = sf::Color::Red;
+	rope[2].position = sf::Vector2f(grapplePoint.getPositionX(), grapplePoint.getPositionY() + 2.f);
+	rope[2].color = sf::Color::Red;
+	rope[3].position = sf::Vector2f(posx, posy + 2.f);
+	rope[3].color = sf::Color::Red;
+	rope[4].position = sf::Vector2f(posx, posy);
+	rope[4].color = sf::Color::Red;
+}
+
+void Player::drawRope(sf::RenderWindow& window) {
+	window.draw(rope, 5, sf::LineStrip);
+}
+
+void Player::checkGrapplePath(Platform ledges[], int arraysize, Platform grapplePoint, sf::RenderWindow &window) {
+	bool pathClear;
+
+	if (posx > grapplePoint.getPositionX()) {
+		distancex = posx - grapplePoint.getPositionX();
+	} else {
+		distancex = grapplePoint.getPositionX() - posx;
+	}
+
+	distancey = posy - grapplePoint.getPositionY();
+	
+	distance = sqrt((distancex * distancex) + (distancey * distancey));
+	float tandistance = distancey / distancex;
+	sf::RectangleShape path;
+	path.setSize({distance, 2.f});
+	path.setPosition(rect.getPosition());
+
+	long angle = atan(tandistance) * (180 / 3.14);
+
+	if (posx > grapplePoint.getPositionX()) {
+		angle = 270.f - angle;
+	}
+
+	if (posx < grapplePoint.getPositionX()) {
+		angle = 360.f - angle;
+	}
+
+	path.setRotation(angle);
+
+	std::cout << angle << std::endl;
+	angle = 0.f;
+	window.draw(path);
 }

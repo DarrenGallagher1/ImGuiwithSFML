@@ -11,8 +11,13 @@ void Animation::setAnimation(int startX, int startY, int width, int height, int 
 	coordinates.width = width;
 	coordinates.height = height;
 	this->endPoint = endPoint;
-	this->startX = startX;
+	this->startPoint = startX;
 	incrementFrame = coordinates.width;
+}
+
+void Animation::setStartEndPoints(int start, int end) {
+	this->startPoint = start;
+	this->endPoint = end;
 }
 
 void Animation::Animate(sf::RectangleShape &rect, float switchTime) {
@@ -21,11 +26,11 @@ void Animation::Animate(sf::RectangleShape &rect, float switchTime) {
 
 	totalTime += time;
 	if (coordinates.left >= endPoint) {
-		coordinates.left = startX;
+		coordinates.left = startPoint;
 	}
 
-	if (coordinates.left <= startX) {
-		coordinates.left = startX;
+	if (coordinates.left <= startPoint) {
+		coordinates.left = startPoint;
 	}
 
 	if (totalTime > switchTime) {
