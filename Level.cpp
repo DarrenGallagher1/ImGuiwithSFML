@@ -25,6 +25,13 @@ void Level::buildLevelOnePlatforms() {
     grapplePoints.emplace_back();
     grapplePoints.emplace_back();
 
+    setLever(1644.f, 336.f);
+    setDoor(113, 88);
+    if (levelSwitch) {
+        setBackground("assets/lvl1.png");
+        levelSwitch = false;
+    }
+    
 }
 
 void Level::buildLevelTwoPlatforms() {
@@ -46,18 +53,25 @@ void Level::buildLevelTwoPlatforms() {
    platforms.emplace_back(1518, 583, 243, 86);
    platforms.emplace_back(1438, 501, 84, 102);
    platforms.emplace_back(1757, 501, 43, 102);
+
+   setLever(1636, 510);
+   setDoor(1585, 757);
+
+   if (levelSwitch) {
+       setBackground("assets/lvl2.png");
+       levelSwitch = false;
+   }
+   
 }
 
 void Level::destroyLevel() {
     platforms.clear();
+    grapplePoints.clear();
 }
 
 void Level::draw(sf::RenderWindow& window) {
     setGrapplePoints();
     checkLever();
-    
-    setDoor(113, 88);
-    setLever(1644.f, 336.f);
 
     for (int i = 0; i < platforms.size(); i++) {
         platforms[i].setColour(sf::Color::White);
@@ -107,10 +121,10 @@ void Level::setGrapplePoints() {
 
     for (int i = 0; i < grapplePoints.size(); i++) {
         grapplePoints[i].setTexture(grappleStone);
-        grapplePoints[i].setScale(0.1, 0.1);
+        grapplePoints[i].setScale(0.2, 0.2);
     }
 
-    grapplePoints[0].setPosition({ 200, 800 });
+    grapplePoints[0].setPosition({ 200, 600 });
     grapplePoints[1].setPosition({ 400, 800 });
 }
 

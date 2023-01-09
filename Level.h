@@ -24,6 +24,7 @@ public:
 	sf::Texture grappleStone;
 	sf::Texture backgroundTexture;
 	bool leverPulled;
+	bool levelSwitch;
 	
 
 	void buildLevelOnePlatforms();

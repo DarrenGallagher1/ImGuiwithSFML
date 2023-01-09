@@ -170,10 +170,10 @@ void Player::anchor(Platform platform) {
 }
 
 //grapple physics. need to take a snapshot of the hypotenuse and then pass into method. A seperate method might be needed
-void Player::grapple(Platform& grapplePoint, float direction) {
+void Player::grapple(sf::Sprite grapplePoint, float direction) {
 
-	distancex = grapplePoint.getPositionX() - posx;
-	distancey = grapplePoint.getPositionY() - posy;
+	distancex = grapplePoint.getPosition().x - posx;
+	distancey = grapplePoint.getPosition().y - posy;
 	distance = sqrt((distancex * distancex) + (distancey * distancey));
 	inverseDistance = 1.f / distance;
 
@@ -181,7 +181,7 @@ void Player::grapple(Platform& grapplePoint, float direction) {
 	float normalisedDistanceY = distancey * inverseDistance;
 	float dropoff;
 
-	if (rect.getGlobalBounds().intersects(grapplePoint.getBounds()) && grappletopoint == true) {
+	if (rect.getGlobalBounds().intersects(grapplePoint.getGlobalBounds()) && grappletopoint == true) {
 		grappletopoint = false;
 		dropoff = normalisedDistanceX;
 		setVelY(10.f * normalisedDistanceY);
@@ -304,12 +304,12 @@ void Player::setTexture() {
 	texture.loadFromFile(animation.fileName);
 }
 
-void Player::setRope(Platform grapplePoint) {
+void Player::setRope(sf::Sprite grapplePoint) {
 	rope[0].position = sf::Vector2f(posx, posy);
 	rope[0].color = sf::Color::Red;
-	rope[1].position = sf::Vector2f(grapplePoint.getPositionX(), grapplePoint.getPositionY());
+	rope[1].position = sf::Vector2f(grapplePoint.getPosition().x, grapplePoint.getPosition().y);
 	rope[1].color = sf::Color::Red;
-	rope[2].position = sf::Vector2f(grapplePoint.getPositionX(), grapplePoint.getPositionY() + 2.f);
+	rope[2].position = sf::Vector2f(grapplePoint.getPosition().x, grapplePoint.getPosition().y + 2.f);
 	rope[2].color = sf::Color::Red;
 	rope[3].position = sf::Vector2f(posx, posy + 2.f);
 	rope[3].color = sf::Color::Red;
@@ -362,3 +362,20 @@ bool Player::checkGrapplePath(Platform ledges[], int arraysize, Platform grapple
 	}
 	return pathClear;
 }
+
+//void Player::assignGrapplePoint(std::vector<sf::Sprite> grapplePoints) {
+//
+//	for (int i = 0; i < grapplePoints.size(); i++) {
+//
+//		if (posx >= grapplePoints[i].getPosition().x) {
+//			distancex = posx - grapplePoint.getPosition().x;
+//			distancey = grapplePoint.getPosition().y - posy;
+//		}
+//		else {
+//			distancex = grapplePoints[i].getPosition().x - posx;
+//			distancey = posy - grapplePoint.getPosition().y;
+//		}
+//
+//		distance = sqrt((distancex * distancex) + (distancey * distancey));
+//	}
+//}

@@ -23,13 +23,11 @@ int main() {
     window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
 
-    Platform grapplePoint(340.f, 860.f, 5.f, 5.f);
+    sf::Sprite grapplePoint;
     Platform grapplePoint2(540.f, 860.f, 5.f, 5.f);
 
-    Level levelOne;
-    levelOne.setBackground("assets/lvl1.png");
-    Level levelTwo;
-    levelTwo.setBackground("assets/lvl2.png");
+    Level level;
+    level.setBackground("assets/lvl1.png");
     Player dwarf(355.f, 800.f, 100.f, 80.f, "dwarves.png");
 
     sf::Clock deltaClock;
@@ -61,6 +59,7 @@ int main() {
 
             if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Enter) {
                 pause = !pause;
+                level.levelSwitch = true;
             }
 
         }
@@ -68,11 +67,11 @@ int main() {
         if (!pause) {
 
             ImGui::SFML::Update(window, deltaClock.restart());
-            levelOne.destroyLevel();
-            levelOne.buildLevelOnePlatforms();
+            level.destroyLevel();
+            level.buildLevelOnePlatforms();
 
             window.clear();
-            window.draw(levelOne.background);
+            window.draw(level.background);
 
             /*ledges[0].movePlatformX(300.f, 600.f);*/
 
@@ -80,26 +79,33 @@ int main() {
 
             ImGui::SFML::Render(window);
 
-            grapplePoint.draw(window);
-            grapplePoint2.draw(window);
-
             /*for (int i = 0; i < 5; i++) {
                 ledges[i].draw(window);
             }*/
 
-            levelOne.draw(window);
+            level.draw(window);
 
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !dwarf.cangrapple && dwarf.getPositionY() > grapplePoint.getPositionY()) {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !dwarf.cangrapple && dwarf.getPositionY() > grapplePoint.getPosition().y) {
 
-                dwarf.cangrapple = true;
-                dwarf.grappletopoint = true;
+                for (int i = 0; i < level.grapplePoints.size(); i++) {
+                    sf::Vector2i clickPosition = sf::Mouse::getPosition(window);
+                    sf::Vector2f tracker = window.mapPixelToCoords(clickPosition);
+
+                    if (level.grapplePoints[i].getGlobalBounds().contains(tracker)) {
+                        dwarf.cangrapple = true;
+                        dwarf.grappletopoint = true;
+                        grapplePoint = level.grapplePoints[i];
+                        break;
+                    }
+                }
+                
 
                 /*if (!dwarf.checkGrapplePath(ledges, 5, grapplePoint)) {
                     dwarf.cangrapple = false;
                     dwarf.grappletopoint = false;
                 }*/
 
-                if (dwarf.getPositionX() > grapplePoint.getPositionX()) {
+                if (dwarf.getPositionX() > grapplePoint.getPosition().x) {
                     direction = -1.f;
                     dwarf.animation.flipped = false;
                 }
@@ -110,9 +116,9 @@ int main() {
                 
             }
 
-            dwarf.shoot(levelOne.platforms, window);
+            dwarf.shoot(level.platforms, window);
             
-            dwarf.checkBounds(levelOne.platforms);
+            dwarf.checkBounds(level.platforms);
             dwarf.update(window);
             window.draw(dwarf.bullet);
 
@@ -121,9 +127,9 @@ int main() {
             }
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::G)) {
-                levelOne.leverPulled = true;
+                level.leverPulled = true;
             } else {
-                levelOne.leverPulled = false;
+                level.leverPulled = false;
             }
 
             if (dwarf.grappletopoint) {
@@ -138,8 +144,9 @@ int main() {
         if (pause) {
 
             window.clear();
-            levelOne.destroyLevel();
-            window.draw(levelTwo.background);
+            level.destroyLevel();
+            level.buildLevelTwoPlatforms();
+            window.draw(level.background);
 
             /*target.setPosition(250.f, 250.f);
             target.setFillColor(sf::Color::Cyan);*/
@@ -147,11 +154,11 @@ int main() {
             sf::Vector2i position = sf::Mouse::getPosition(window);
             sf::Vector2f tracker = window.mapPixelToCoords(position);
 
-            levelOne.buildLevelTwoPlatforms();
+            
             dwarf.setVelX();
-            dwarf.checkBounds(levelOne.platforms);
+            dwarf.checkBounds(level.platforms);
             dwarf.update(window);
-            levelOne.draw(window);
+            level.draw(window);
 
             window.display();
         }

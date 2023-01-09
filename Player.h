@@ -57,6 +57,7 @@ public:
 	Animation animation;
 	sf::RectangleShape rect;
 	sf::Vertex rope[5];
+	sf::Sprite grapplePoint;
 
 	void setPosition(float x, float y);
 	float getPositionX();
@@ -82,15 +83,16 @@ public:
 	sf::FloatRect getBounds();
 	sf::RectangleShape getShape();
 	void setIndirVelX(float vel);
-	void grapple(Platform& grapplePoint, float direction);
+	void grapple(sf::Sprite grapplePoint, float direction);
 	bool getOnLedge();
 	void setOnLedge(bool onLedge);
 	void anchor(Platform platform);
 	void setShapeColour(sf::Color colour);
 	void shoot(std::vector<Platform> ledges, sf::RenderWindow& window);
 	void checkBounds(std::vector<Platform> platforms);
-	void setRope(Platform grapplePoint);
+	void setRope(sf::Sprite grapplePoint);
 	void drawRope(sf::RenderWindow& window);
+	/*void assignGrapplePoint(std::vector<sf::Sprite> grapplePoints);*/
 	bool checkGrapplePath(Platform ledges[], int arraysize, Platform grapplePoint);
 
 	Player(float posx, float posy, float width, float height, std::string fileName) {
