@@ -4,6 +4,7 @@
 #include "SFML/Graphics.hpp"
 #include "Platform.h"
 #include "Animation.h"
+#include "Level.h"
 #include <vector>
 #include <iostream>
 
@@ -11,8 +12,8 @@ class Player
 {
 private:
 	
-	const float SCREENWIDTH = 1080.f;
-	const float SCREENHEIGHT = 720.f;
+	const float SCREENWIDTH = 1800.f;
+	const float SCREENHEIGHT = 1013.f;
 	float posy;
 	float height;
 	float width;
@@ -86,7 +87,7 @@ public:
 	void anchor(Platform platform);
 	void setShapeColour(sf::Color colour);
 	void shoot(Platform ledges[], int arraysize, sf::RenderWindow& window);
-	void checkBounds(Platform ledges[], int arraysize);
+	void checkBounds(std::vector<Platform> platforms);
 	void setRope(Platform grapplePoint);
 	void drawRope(sf::RenderWindow& window);
 	bool checkGrapplePath(Platform ledges[], int arraysize, Platform grapplePoint);

@@ -106,10 +106,10 @@ void Player::update(sf::RenderWindow& window) {
 	movePlayer();
 	animation.Animate(rect, animation.switchTime);
 	window.draw(rect);
-	/*window.draw(topBound);
+	window.draw(topBound);
 	window.draw(leftBound);
 	window.draw(bottomBound);
-	window.draw(rightBound);*/
+	window.draw(rightBound);
 }
 
 sf::FloatRect Player::getBounds() {
@@ -157,7 +157,7 @@ void Player::anchor(Platform platform) {
 
 		if (getOnLedge()) {
 			setGroundHeight(platform.getPositionY() - rect.getGlobalBounds().height / 2 + 1.f);
-			setIndirVelX(platform.getXVelocity());
+			//setIndirVelX(platform.getXVelocity());
 		} else {
 			setIndirVelX(0.f);
 		}
@@ -247,12 +247,12 @@ void Player::shoot(Platform ledges[], int arraysize, sf::RenderWindow& window) {
 	}
 }
 
-void Player::checkBounds(Platform ledges[], int arraysize) {
-	for (int i = 0; i < 5; i++) {
+void Player::checkBounds(std::vector<Platform> platforms) {
+	for (int i = 0; i < platforms.size(); i++) {
 
-		if (bottomBound.getGlobalBounds().intersects(ledges[i].getBounds())) {
+		if (bottomBound.getGlobalBounds().intersects(platforms[i].getBounds())) {
 			setOnLedge(true);
-			anchor(ledges[i]);
+			anchor(platforms[i]);
 			break;
 		} else {
 			setOnLedge(false);
@@ -260,9 +260,9 @@ void Player::checkBounds(Platform ledges[], int arraysize) {
 		}
 	}
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < platforms.size(); i++) {
 
-		if (rightBound.getGlobalBounds().intersects(ledges[i].getBounds())) {
+		if (rightBound.getGlobalBounds().intersects(platforms[i].getBounds())) {
 			if (getVelX() > 0.f) {
 				velx = 0.f;
 				break;
@@ -270,11 +270,21 @@ void Player::checkBounds(Platform ledges[], int arraysize) {
 		}
 	}
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < platforms.size(); i++) {
 
-		if (leftBound.getGlobalBounds().intersects(ledges[i].getBounds())) {
+		if (leftBound.getGlobalBounds().intersects(platforms[i].getBounds())) {
 			if (getVelX() < 0.f) {
 				velx = 0.f;
+				break;
+			}
+		}
+	}
+
+	for (int i = 0; i < platforms.size(); i++) {
+
+		if (topBound.getGlobalBounds().intersects(platforms[i].getBounds())) {
+			if (getVelY() < 0.f) {
+				vely = 0.f;
 				break;
 			}
 		}

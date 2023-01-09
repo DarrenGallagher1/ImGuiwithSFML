@@ -30,7 +30,7 @@ int main() {
     img.setScale(0.15, 0.15);
 
     //represents player
-    Player dwarf(500.f, 700.f, 100.f, 80.f, "dwarves.png");
+
 
     Platform ledge(400.f, 550.f, 100.f, 400.f);
     Platform ledge2(300.f, 600.f, 100.f, 400.f);
@@ -42,11 +42,7 @@ int main() {
     Platform ledges[5] = { ledge, ledge2, ledge3, ledge4, ledge5 };
 
     Level levelOne;
-
-    sf::CircleShape target;
-    target.setRadius(150.f);
-    target.setOrigin(target.getGlobalBounds().width / 2, target.getGlobalBounds().height / 2);
-    target.setFillColor(sf::Color::Transparent);
+    Player dwarf(100.f, 842.f, 100.f, 80.f, "dwarves.png");
 
     sf::Clock deltaClock;
 
@@ -93,8 +89,6 @@ int main() {
 
             dwarf.setVelX();
 
-            dwarf.checkBounds(ledges, 5);
-
             ImGui::SFML::Render(window);
 
             grapplePoint.draw(window);
@@ -104,8 +98,6 @@ int main() {
             }*/
 
             levelOne.draw(window);
-
-            target.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !dwarf.cangrapple && dwarf.getPositionY() > grapplePoint.getPositionY()) {
 
@@ -129,7 +121,9 @@ int main() {
             }
 
             dwarf.shoot(ledges, 5, window);
-
+            dwarf.checkBounds(levelOne.platforms);
+            dwarf.update(window);
+            
             window.draw(dwarf.bullet);
 
             if (dwarf.cangrapple) {
@@ -142,7 +136,7 @@ int main() {
                 levelOne.leverPulled = false;
             }
 
-            dwarf.update(window);
+            
 
             if (dwarf.grappletopoint) {
                 dwarf.setRope(grapplePoint);
@@ -163,18 +157,9 @@ int main() {
             sf::Vector2i position = sf::Mouse::getPosition(window);
             sf::Vector2f tracker = window.mapPixelToCoords(position);
 
-            if (target.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                dwarf.animation.coordinates.top = 160.f;
-            }
-
-            if (target.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-                yellow = false;
-            }
-
             levelOne.buildLevelTwoPlatforms();
             levelOne.draw(window);
 
-            window.draw(target);
             window.display();
         }
     }

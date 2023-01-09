@@ -13,7 +13,7 @@ void Level::buildLevelOnePlatforms() {
     platforms.emplace_back(1361, 646, 81, 82);
     platforms.emplace_back(1520, 727, 83, 73);
     platforms.emplace_back(1682, 809, winWidth, 85);
-    platforms.emplace_back(1600, 890, winWidth, winHeight);
+    //platforms.emplace_back(1600, 890, winWidth, winHeight);
     platforms.emplace_back(1361, 327, 240, 80);
     platforms.emplace_back(1530, 407, winWidth, 80);
     platforms.emplace_back(1608, 486, winWidth, 80);
