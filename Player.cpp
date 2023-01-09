@@ -101,7 +101,9 @@ void Player::movePlayer() {
 	bottomBound.setPosition({ posx - rect.getGlobalBounds(). width / 4 + 5.f, posy + rect.getGlobalBounds().height / 2 + 1.f});
 }
 
-void Player::draw(sf::RenderWindow& window) {
+void Player::update(sf::RenderWindow& window) {
+	jump();
+	movePlayer();
 	animation.Animate(rect, animation.switchTime);
 	window.draw(rect);
 	window.draw(topBound);
@@ -300,17 +302,17 @@ void Player::drawRope(sf::RenderWindow& window) {
 	window.draw(rope, 5, sf::LineStrip);
 }
 
-void Player::checkGrapplePath(Platform ledges[], int arraysize, Platform grapplePoint, sf::RenderWindow &window) {
+bool Player::checkGrapplePath(Platform ledges[], int arraysize, Platform grapplePoint) {
 	bool pathClear;
 
-	if (posx > grapplePoint.getPositionX()) {
+	if (posx >= grapplePoint.getPositionX()) {
 		distancex = posx - grapplePoint.getPositionX();
+		distancey = grapplePoint.getPositionY() - posy;
 	} else {
 		distancex = grapplePoint.getPositionX() - posx;
+		distancey = posy - grapplePoint.getPositionY();
 	}
 
-	distancey = posy - grapplePoint.getPositionY();
-	
 	distance = sqrt((distancex * distancex) + (distancey * distancey));
 	float tandistance = distancey / distancex;
 	sf::RectangleShape path;
@@ -320,7 +322,7 @@ void Player::checkGrapplePath(Platform ledges[], int arraysize, Platform grapple
 	long angle = atan(tandistance) * (180 / 3.14);
 
 	if (posx > grapplePoint.getPositionX()) {
-		angle = 270.f - angle;
+		angle = (360.f - angle) + 180.f;
 	}
 
 	if (posx < grapplePoint.getPositionX()) {
@@ -328,8 +330,16 @@ void Player::checkGrapplePath(Platform ledges[], int arraysize, Platform grapple
 	}
 
 	path.setRotation(angle);
-
-	std::cout << angle << std::endl;
+	sf::FloatRect bounds = path.getGlobalBounds();
 	angle = 0.f;
-	window.draw(path);
+
+	for (int i = 0; i < arraysize; i++) {
+		if (bounds.intersects(ledges[i].getBounds())) {
+			pathClear = false;
+			break;
+		} else {
+			pathClear = true;
+		}
+	}
+	return pathClear;
 }

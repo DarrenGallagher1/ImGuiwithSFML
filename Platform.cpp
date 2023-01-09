@@ -34,11 +34,11 @@ void Platform::draw(sf::RenderWindow& window) {
 
 void Platform::setDirection(float pointA, float pointB) {
 
-        if (platform.getPosition().x == pointA) {
+        if (platform.getPosition().x <= pointA) {
             direction = true;
         }
 
-        if (platform.getPosition().x == pointB) {
+        if (platform.getPosition().x >= pointB) {
             direction = false;
         }
 }

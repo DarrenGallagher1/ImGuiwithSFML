@@ -75,7 +75,7 @@ public:
 	float getVelY();
 	void setGrappleVelocity(float velx, float vely);
 	void jump();
-	void draw(sf::RenderWindow& window);
+	void update(sf::RenderWindow& window);
 	void movePlayer();
 	sf::FloatRect getBounds();
 	sf::RectangleShape getShape();
@@ -89,7 +89,7 @@ public:
 	void checkBounds(Platform ledges[], int arraysize);
 	void setRope(Platform grapplePoint);
 	void drawRope(sf::RenderWindow& window);
-	void checkGrapplePath(Platform ledges[], int arraysize, Platform grapplePoint, sf::RenderWindow &window);
+	bool checkGrapplePath(Platform ledges[], int arraysize, Platform grapplePoint);
 
 	Player(float posx, float posy, float width, float height, std::string fileName) {
 		setPosition(posx, posy);
@@ -102,12 +102,12 @@ public:
 		rect.setOrigin({ rect.getGlobalBounds().width / 2, rect.getGlobalBounds().height / 2 });
 		topBound.setSize({ rect.getGlobalBounds().width / 2 - 2.f, 5.f });
 		bottomBound.setSize({ rect.getGlobalBounds().width / 2 - 10.f, 5.f });
-		leftBound.setSize({ 5.f, rect.getGlobalBounds().height / 2 });
-		rightBound.setSize({ 5.f, rect.getGlobalBounds().height / 2 });
+		leftBound.setSize({ 10.f, rect.getGlobalBounds().height / 2 });
+		rightBound.setSize({ 10.f, rect.getGlobalBounds().height / 2 });
 		topBound.setFillColor(sf::Color::Transparent);
 		leftBound.setFillColor(sf::Color::Transparent);
-		rightBound.setFillColor(sf::Color::Transparent);
-		bottomBound.setFillColor(sf::Color::Transparent);
+		rightBound.setFillColor(sf::Color::White);
+		bottomBound.setFillColor(sf::Color::White);
 		bullet.setFillColor(sf::Color::Transparent);
 	}
 };

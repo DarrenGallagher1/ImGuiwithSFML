@@ -104,10 +104,13 @@ int main() {
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !dwarf.cangrapple && dwarf.getPositionY() > grapplePoint.getPositionY()) {
 
-                dwarf.checkGrapplePath(ledges, 5, grapplePoint, window);
-
                 dwarf.cangrapple = true;
                 dwarf.grappletopoint = true;
+
+                if (!dwarf.checkGrapplePath(ledges, 5, grapplePoint)) {
+                    dwarf.cangrapple = false;
+                    dwarf.grappletopoint = false;
+                }
 
                 if (dwarf.getPositionX() > grapplePoint.getPositionX()) {
                     direction = -1.f;
@@ -117,21 +120,18 @@ int main() {
                     direction = 1.f;
                     dwarf.animation.flipped = true;
                 }
+                
             }
 
             dwarf.shoot(ledges, 5, window);
 
             window.draw(dwarf.bullet);
 
-            dwarf.jump();
-
             if (dwarf.cangrapple) {
                 dwarf.grapple(grapplePoint, direction);
             }
 
-            dwarf.movePlayer();
-
-            dwarf.draw(window);
+            dwarf.update(window);
 
             if (dwarf.grappletopoint) {
                 dwarf.setRope(grapplePoint);
