@@ -24,12 +24,8 @@ void Platform::setShape() {
 	platform.setPosition({ posx, posy });
 }
 
-sf::RectangleShape Platform::getShape() {
-	return platform;
-}
-
 void Platform::setColour(sf::Color colour) {
-	platform.setFillColor(colour);
+    this->colour = colour;
 }
 
 void Platform::draw(sf::RenderWindow& window) {
@@ -73,5 +69,9 @@ sf::FloatRect Platform::getBounds() {
 
 bool Platform::getDirection() {
 	return direction;
+}
+
+sf::RectangleShape Platform::getShape() {
+	return this->platform;
 }
 

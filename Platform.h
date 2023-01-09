@@ -23,9 +23,9 @@ public:
 	float getPositionY();
 	void setSize(float w, float h);
 	void setShape();
-	sf::RectangleShape getShape();
 	void setColour(sf::Color colour);
 	void draw(sf::RenderWindow& window);
+	sf::RectangleShape getShape();
 	void setDirection(float pointA, float pointB);
 	void setXVelocity();
 	float getXVelocity();
@@ -34,10 +34,10 @@ public:
 	bool getDirection();
 
 	Platform(float posx, float posy, float height, float width) {
+		setColour(sf::Color::Transparent);
 		setSize(width, height);
 		setPosition(posx, posy);
 		setShape();
-		setColour(sf::Color::White);
 	}
 };
 

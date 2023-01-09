@@ -1,7 +1,7 @@
 #include "Level.h"
 
 void Level::buildLevelOnePlatforms() {
-    platforms.emplace_back(0, 969, winWidth, winHeight);
+    platforms.emplace_back(0, 969, winWidth, 100.f);
     platforms.emplace_back(0, 0, winWidth, 83);
     platforms.emplace_back(0, 243, 321, 65);
     platforms.emplace_back(0, 0, 80, 619);
@@ -13,14 +13,18 @@ void Level::buildLevelOnePlatforms() {
     platforms.emplace_back(1361, 646, 81, 82);
     platforms.emplace_back(1520, 727, 83, 73);
     platforms.emplace_back(1682, 809, winWidth, 85);
-    //platforms.emplace_back(1600, 890, winWidth, winHeight);
+    platforms.emplace_back(1600, 890, winWidth, winHeight);
     platforms.emplace_back(1361, 327, 240, 80);
     platforms.emplace_back(1530, 407, winWidth, 80);
     platforms.emplace_back(1608, 486, winWidth, 80);
     platforms.emplace_back(722, 882, 240, winHeight);
     platforms.emplace_back(802, 807, 82, winHeight);
     platforms.emplace_back(641, 62, 82, 262);
-    platforms.emplace_back(1763, 0, winWidth, winHeight);
+    platforms.emplace_back(1763, 0, winWidth, winHeight);  
+
+    grapplePoints.emplace_back();
+    grapplePoints.emplace_back();
+
 }
 
 void Level::buildLevelTwoPlatforms() {
@@ -49,13 +53,19 @@ void Level::destroyLevel() {
 }
 
 void Level::draw(sf::RenderWindow& window) {
+    setGrapplePoints();
     checkLever();
     
     setDoor(113, 88);
     setLever(1644.f, 336.f);
+
     for (int i = 0; i < platforms.size(); i++) {
         platforms[i].setColour(sf::Color::White);
         window.draw(platforms[i].getShape());
+    }
+
+    for (int i = 0; i < grapplePoints.size(); i++) {
+        window.draw(grapplePoints[i]);
     }
 
     window.draw(lever);
@@ -89,4 +99,23 @@ void Level::setDoor(float posx, float posy) {
     door.setPosition(posx, posy);
     doorTexture.loadFromFile(doorFileName);
     door.setTexture(doorTexture);
+}
+
+void Level::setGrapplePoints() {
+    grappleFileName = "assets/grappleStone.png";
+    grappleStone.loadFromFile(grappleFileName);
+
+    for (int i = 0; i < grapplePoints.size(); i++) {
+        grapplePoints[i].setTexture(grappleStone);
+        grapplePoints[i].setScale(0.1, 0.1);
+    }
+
+    grapplePoints[0].setPosition({ 200, 800 });
+    grapplePoints[1].setPosition({ 400, 800 });
+}
+
+void Level::setBackground(std::string fileName) {
+    backgroundTexture.loadFromFile(fileName);
+    background.setTexture(backgroundTexture);
+    background.setPosition(0.f, 0.f);
 }

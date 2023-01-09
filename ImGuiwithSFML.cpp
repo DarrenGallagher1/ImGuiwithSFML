@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Level.h"
 #include <array>
+#include <iostream>
 
 const float winWidth = 1800.f;
 const float winHeight = 1013.f;
@@ -22,27 +23,14 @@ int main() {
     window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
 
-
-    sf::Texture texture;
-    texture.loadFromFile("Santa1.png");
-    sf::Sprite img;
-    img.setTexture(texture);
-    img.setScale(0.15, 0.15);
-
-    //represents player
-
-
-    Platform ledge(400.f, 550.f, 100.f, 400.f);
-    Platform ledge2(300.f, 600.f, 100.f, 400.f);
-    Platform ledge3(700.f, 550.f, 100.f, 400.f);
-    Platform ledge4(0.f, 720.f - 40.f, 1080.f, 40.f);
-    Platform ledge5(1000.f, 0.f, 40.f, 720.f);
-    Platform grapplePoint(540.f, 360.f, 5.f, 5.f);
-
-    Platform ledges[5] = { ledge, ledge2, ledge3, ledge4, ledge5 };
+    Platform grapplePoint(340.f, 860.f, 5.f, 5.f);
+    Platform grapplePoint2(540.f, 860.f, 5.f, 5.f);
 
     Level levelOne;
-    Player dwarf(100.f, 842.f, 100.f, 80.f, "dwarves.png");
+    levelOne.setBackground("assets/lvl1.png");
+    Level levelTwo;
+    levelTwo.setBackground("assets/lvl2.png");
+    Player dwarf(355.f, 800.f, 100.f, 80.f, "dwarves.png");
 
     sf::Clock deltaClock;
 
@@ -84,14 +72,16 @@ int main() {
             levelOne.buildLevelOnePlatforms();
 
             window.clear();
+            window.draw(levelOne.background);
 
-            ledges[0].movePlatformX(300.f, 600.f);
+            /*ledges[0].movePlatformX(300.f, 600.f);*/
 
             dwarf.setVelX();
 
             ImGui::SFML::Render(window);
 
             grapplePoint.draw(window);
+            grapplePoint2.draw(window);
 
             /*for (int i = 0; i < 5; i++) {
                 ledges[i].draw(window);
@@ -104,10 +94,10 @@ int main() {
                 dwarf.cangrapple = true;
                 dwarf.grappletopoint = true;
 
-                if (!dwarf.checkGrapplePath(ledges, 5, grapplePoint)) {
+                /*if (!dwarf.checkGrapplePath(ledges, 5, grapplePoint)) {
                     dwarf.cangrapple = false;
                     dwarf.grappletopoint = false;
-                }
+                }*/
 
                 if (dwarf.getPositionX() > grapplePoint.getPositionX()) {
                     direction = -1.f;
@@ -120,10 +110,10 @@ int main() {
                 
             }
 
-            dwarf.shoot(ledges, 5, window);
+            dwarf.shoot(levelOne.platforms, window);
+            
             dwarf.checkBounds(levelOne.platforms);
             dwarf.update(window);
-            
             window.draw(dwarf.bullet);
 
             if (dwarf.cangrapple) {
@@ -136,13 +126,12 @@ int main() {
                 levelOne.leverPulled = false;
             }
 
-            
-
             if (dwarf.grappletopoint) {
                 dwarf.setRope(grapplePoint);
                 dwarf.drawRope(window);
             }
 
+            std::cout << dwarf.bullet.getPosition().x << " " << dwarf.bullet.getPosition().y << std::endl;
             window.display();
         }
 
@@ -150,6 +139,7 @@ int main() {
 
             window.clear();
             levelOne.destroyLevel();
+            window.draw(levelTwo.background);
 
             /*target.setPosition(250.f, 250.f);
             target.setFillColor(sf::Color::Cyan);*/
@@ -158,12 +148,14 @@ int main() {
             sf::Vector2f tracker = window.mapPixelToCoords(position);
 
             levelOne.buildLevelTwoPlatforms();
+            dwarf.setVelX();
+            dwarf.checkBounds(levelOne.platforms);
+            dwarf.update(window);
             levelOne.draw(window);
 
             window.display();
         }
     }
 
-    
     ImGui::SFML::Shutdown();
 }

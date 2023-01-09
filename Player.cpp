@@ -41,6 +41,10 @@ void Player::setShapeColour(sf::Color colour) {
 void Player::setShape() {
 	rect.setSize({ width, height });
 	rect.setPosition({ posx, posy });
+	topBound.setPosition({ posx - rect.getGlobalBounds().width / 4 + 1.f, posy - rect.getGlobalBounds().height / 4 });
+	leftBound.setPosition({ posx - rect.getGlobalBounds().width / 4 - leftBound.getGlobalBounds().width, posy - rect.getGlobalBounds().height / 4 + 15.f });
+	rightBound.setPosition({ posx + rect.getGlobalBounds().width / 4, posy - rect.getGlobalBounds().height / 4 + 15.f });
+	bottomBound.setPosition({ posx - rect.getGlobalBounds().width / 4 + 5.f, posy + rect.getGlobalBounds().height / 2 + 1.f });
 }
 
 void Player::setGroundHeight(float height) {
@@ -99,6 +103,7 @@ void Player::movePlayer() {
 	leftBound.setPosition({ posx - rect.getGlobalBounds().width / 4 - leftBound.getGlobalBounds().width, posy - rect.getGlobalBounds().height / 4 + 15.f});
 	rightBound.setPosition({ posx + rect.getGlobalBounds().width / 4, posy - rect.getGlobalBounds().height / 4 + 15.f});
 	bottomBound.setPosition({ posx - rect.getGlobalBounds(). width / 4 + 5.f, posy + rect.getGlobalBounds().height / 2 + 1.f});
+	hurtBox.setPosition(posx + (rect.getGlobalBounds().width / 4), posy + (rect.getGlobalBounds().height / 4));
 }
 
 void Player::update(sf::RenderWindow& window) {
@@ -110,6 +115,7 @@ void Player::update(sf::RenderWindow& window) {
 	window.draw(leftBound);
 	window.draw(bottomBound);
 	window.draw(rightBound);
+	window.draw(hurtBox);
 }
 
 sf::FloatRect Player::getBounds() {
@@ -202,7 +208,7 @@ void Player::grapple(Platform& grapplePoint, float direction) {
 	setPosition((posx + velx), (posy + vely));
 }
 
-void Player::shoot(Platform ledges[], int arraysize, sf::RenderWindow& window) {
+void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
 
 	if (shot) {
 
@@ -232,7 +238,7 @@ void Player::shoot(Platform ledges[], int arraysize, sf::RenderWindow& window) {
 
 	bullet.move({ bulletsVelX, bulletsVelY });
 
-	for (int i = 0; i < arraysize; i++) {
+	for (int i = 0; i < ledges.size(); i++) {
 
 		if (bullet.getGlobalBounds().intersects(ledges[i].getBounds())) {
 			bullet.setFillColor(sf::Color::Transparent);
@@ -240,7 +246,7 @@ void Player::shoot(Platform ledges[], int arraysize, sf::RenderWindow& window) {
 		}
 	}
 
-	if (bullet.getPosition().x > 1080.f ||
+	if (bullet.getPosition().x > SCREENWIDTH ||
 		bullet.getPosition().x < 0.f ||
 		bullet.getPosition().y < 0.f) {
 		bullet.setFillColor(sf::Color::Transparent);
@@ -248,13 +254,16 @@ void Player::shoot(Platform ledges[], int arraysize, sf::RenderWindow& window) {
 }
 
 void Player::checkBounds(std::vector<Platform> platforms) {
+
+
 	for (int i = 0; i < platforms.size(); i++) {
 
 		if (bottomBound.getGlobalBounds().intersects(platforms[i].getBounds())) {
 			setOnLedge(true);
 			anchor(platforms[i]);
 			break;
-		} else {
+		}
+		else {
 			setOnLedge(false);
 			setGroundHeight(SCREENHEIGHT);
 		}

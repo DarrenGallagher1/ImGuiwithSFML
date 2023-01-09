@@ -20,8 +20,8 @@ private:
 	float vely;
 	float indirVelX = 0.f;
 	float gravity = 0.7;
-	float groundHeight;
-	bool lift = true;
+	float groundHeight = 930.f;
+	bool lift = false;
 	bool onLedge = false;
 	bool anchored;
 	sf::Texture texture;
@@ -30,10 +30,10 @@ private:
 
 public:
 
-	bool cangrapple;
-	bool grappletopoint;
-	bool shot;
-	bool ropeGrow;
+	bool cangrapple = false;
+	bool grappletopoint = false;
+	bool shot = false;
+	bool ropeGrow = false;
 	float distancex;
 	float distancey;
 	float distance;
@@ -51,6 +51,7 @@ public:
 	sf::RectangleShape leftBound;
 	sf::RectangleShape rightBound;
 	sf::RectangleShape bottomBound;
+	sf::RectangleShape hurtBox;
 	float velx;
 	float posx;
 	Animation animation;
@@ -86,7 +87,7 @@ public:
 	void setOnLedge(bool onLedge);
 	void anchor(Platform platform);
 	void setShapeColour(sf::Color colour);
-	void shoot(Platform ledges[], int arraysize, sf::RenderWindow& window);
+	void shoot(std::vector<Platform> ledges, sf::RenderWindow& window);
 	void checkBounds(std::vector<Platform> platforms);
 	void setRope(Platform grapplePoint);
 	void drawRope(sf::RenderWindow& window);
@@ -95,6 +96,7 @@ public:
 	Player(float posx, float posy, float width, float height, std::string fileName) {
 		setPosition(posx, posy);
 		setSize(width, height);
+		setGroundHeight(1013.f);
 		animation.setFileName(fileName);
 		animation.setAnimation(0, 0, width, height, 300);
 		setTexture();
@@ -105,6 +107,9 @@ public:
 		bottomBound.setSize({ rect.getGlobalBounds().width / 2 - 10.f, 5.f });
 		leftBound.setSize({ 10.f, rect.getGlobalBounds().height / 2 });
 		rightBound.setSize({ 10.f, rect.getGlobalBounds().height / 2 });
+		hurtBox.setSize({ 10.f, 30.f });
+		hurtBox.setOrigin({ 25.f, 20.f });
+		hurtBox.setFillColor(sf::Color::White);
 		topBound.setFillColor(sf::Color::Transparent);
 		leftBound.setFillColor(sf::Color::Transparent);
 		rightBound.setFillColor(sf::Color::White);
