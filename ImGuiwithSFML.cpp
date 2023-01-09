@@ -6,10 +6,11 @@
 #include "SFML/Graphics.hpp"
 #include "Platform.h"
 #include "Player.h"
+#include "Level.h"
 #include <array>
 
-const float SCREENWIDTH = 1080.f;
-const float SCREENHEIGHT = 720.f;
+const float winWidth = 1800.f;
+const float winHeight = 1013.f;
 bool testMenu = false;
 bool move = true;
 bool pause = false;
@@ -17,7 +18,7 @@ bool yellow = false;
 float direction;
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), "ImGui + SFML");
+    sf::RenderWindow window(sf::VideoMode(winWidth, winHeight), "ImGui + SFML");
     window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
 
@@ -31,16 +32,16 @@ int main() {
     //represents player
     Player dwarf(500.f, 700.f, 100.f, 80.f, "dwarves.png");
 
-    Platform ledge(400.f, 550.f, 100.f, 400.f, sf::Color::White);
-    Platform ledge2(300.f, 600.f, 100.f, 400.f, sf::Color::White);
-    Platform ledge3(700.f, 550.f, 100.f, 400.f, sf::Color::White);
-    Platform ledge4(0.f, 720.f - 40.f, 1080.f, 40.f, sf::Color::White);
-    Platform ledge5(1000.f, 0.f, 40.f, 720.f, sf::Color::White);
-    Platform grapplePoint(540.f, 360.f, 5.f, 5.f, sf::Color::Yellow);
+    Platform ledge(400.f, 550.f, 100.f, 400.f);
+    Platform ledge2(300.f, 600.f, 100.f, 400.f);
+    Platform ledge3(700.f, 550.f, 100.f, 400.f);
+    Platform ledge4(0.f, 720.f - 40.f, 1080.f, 40.f);
+    Platform ledge5(1000.f, 0.f, 40.f, 720.f);
+    Platform grapplePoint(540.f, 360.f, 5.f, 5.f);
 
     Platform ledges[5] = { ledge, ledge2, ledge3, ledge4, ledge5 };
 
-    
+    Level levelOne;
 
     sf::CircleShape target;
     target.setRadius(150.f);
@@ -83,6 +84,8 @@ int main() {
         if (!pause) {
 
             ImGui::SFML::Update(window, deltaClock.restart());
+            levelOne.destroyLevel();
+            levelOne.buildLevelOnePlatforms();
 
             window.clear();
 
@@ -96,9 +99,11 @@ int main() {
 
             grapplePoint.draw(window);
 
-            for (int i = 0; i < 5; i++) {
+            /*for (int i = 0; i < 5; i++) {
                 ledges[i].draw(window);
-            }
+            }*/
+
+            levelOne.draw(window);
 
             target.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 
@@ -131,6 +136,12 @@ int main() {
                 dwarf.grapple(grapplePoint, direction);
             }
 
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::G)) {
+                levelOne.leverPulled = true;
+            } else {
+                levelOne.leverPulled = false;
+            }
+
             dwarf.update(window);
 
             if (dwarf.grappletopoint) {
@@ -144,9 +155,10 @@ int main() {
         if (pause) {
 
             window.clear();
+            levelOne.destroyLevel();
 
-            target.setPosition(250.f, 250.f);
-            target.setFillColor(sf::Color::Cyan);
+            /*target.setPosition(250.f, 250.f);
+            target.setFillColor(sf::Color::Cyan);*/
 
             sf::Vector2i position = sf::Mouse::getPosition(window);
             sf::Vector2f tracker = window.mapPixelToCoords(position);
@@ -158,6 +170,9 @@ int main() {
             if (target.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
                 yellow = false;
             }
+
+            levelOne.buildLevelTwoPlatforms();
+            levelOne.draw(window);
 
             window.draw(target);
             window.display();

@@ -106,10 +106,10 @@ void Player::update(sf::RenderWindow& window) {
 	movePlayer();
 	animation.Animate(rect, animation.switchTime);
 	window.draw(rect);
-	window.draw(topBound);
+	/*window.draw(topBound);
 	window.draw(leftBound);
 	window.draw(bottomBound);
-	window.draw(rightBound);
+	window.draw(rightBound);*/
 }
 
 sf::FloatRect Player::getBounds() {

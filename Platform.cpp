@@ -24,8 +24,12 @@ void Platform::setShape() {
 	platform.setPosition({ posx, posy });
 }
 
+sf::RectangleShape Platform::getShape() {
+	return platform;
+}
+
 void Platform::setColour(sf::Color colour) {
-    this->colour = colour;
+	platform.setFillColor(colour);
 }
 
 void Platform::draw(sf::RenderWindow& window) {

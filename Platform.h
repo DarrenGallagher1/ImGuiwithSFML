@@ -23,6 +23,7 @@ public:
 	float getPositionY();
 	void setSize(float w, float h);
 	void setShape();
+	sf::RectangleShape getShape();
 	void setColour(sf::Color colour);
 	void draw(sf::RenderWindow& window);
 	void setDirection(float pointA, float pointB);
@@ -32,11 +33,11 @@ public:
 	sf::FloatRect getBounds();
 	bool getDirection();
 
-	Platform(float posx, float posy, float height, float width, sf::Color colour) {
+	Platform(float posx, float posy, float height, float width) {
 		setSize(width, height);
 		setPosition(posx, posy);
-		setColour(colour);
 		setShape();
+		setColour(sf::Color::White);
 	}
 };
 
