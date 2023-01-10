@@ -1,4 +1,6 @@
+
 #include "Level.h"
+#include "Enemy.h"
 
 void Level::buildLevelOnePlatforms() {
     platforms.emplace_back(0, 969, winWidth, 100.f);
@@ -20,10 +22,19 @@ void Level::buildLevelOnePlatforms() {
     platforms.emplace_back(722, 882, 240, winHeight);
     platforms.emplace_back(802, 807, 82, winHeight);
     platforms.emplace_back(641, 62, 82, 262);
-    platforms.emplace_back(1763, 0, winWidth, winHeight);  
+    platforms.emplace_back(1763, 0, winWidth, winHeight);
+    platforms.emplace_back(0, 573, 14, 440);
+    platforms.emplace_back(659, 566, 429, 65);
 
     grapplePoints.emplace_back();
     grapplePoints.emplace_back();
+    grapplePoints.emplace_back();
+
+    grapplePoints[0].setPosition({ 381, 96 });
+    grapplePoints[1].setPosition({ 1237, 109 });
+    grapplePoints[2].setPosition({ 869, 350 });
+
+    deathZone.emplace_back(720, 543, 325, 8);
 
     setLever(1644.f, 336.f);
     setDoor(113, 88);
@@ -31,6 +42,7 @@ void Level::buildLevelOnePlatforms() {
     if (levelSwitch) {
         setBackground("assets/lvl1.png");
         levelSwitch = false;
+        leverPulled = false;
     }
     
 }
@@ -54,20 +66,65 @@ void Level::buildLevelTwoPlatforms() {
    platforms.emplace_back(1518, 583, 243, 86);
    platforms.emplace_back(1438, 501, 84, 102);
    platforms.emplace_back(1757, 501, 43, 102);
+   platforms.emplace_back(0, 0, 6, winHeight);
+   platforms.emplace_back(1794, 0, 6, winHeight);
+
+   grapplePoints.emplace_back();
+
+   grapplePoints[0].setPosition({ 1110, 38 });
+
+   deathZone.emplace_back(570, 1006, 552, 8);
 
    setLever(1636, 510);
    setDoor(1585, 757);
 
    if (levelSwitch) {
        setBackground("assets/lvl2.png");
+       leverPulled = false;
        levelSwitch = false;
    }
    
 }
 
+void Level::buildLevelThreePlatforms(Enemy &enemy) {
+    platforms.emplace_back(0, 961, 1800, 52);
+    platforms.emplace_back(2, 560, 381, 101);
+    platforms.emplace_back(1417, 560, 381, 101);
+    platforms.emplace_back(1, 158, 61, 415);
+    platforms.emplace_back(1738, 158, 61, 821);
+    platforms.emplace_back(2, 158, 1800, 62);
+    platforms.emplace_back(0, 0, 6, winHeight);
+
+    grapplePoints.emplace_back();
+    grapplePoints.emplace_back();
+
+    grapplePoints[0].setPosition({ 540, 388 });
+    grapplePoints[1].setPosition({ 1260, 388 });
+
+    if (levelSwitch) {
+        setBackground("assets/lvl3.png");
+        leverPulled = false;
+        levelSwitch = false;
+        enemy.setRectSize(48, 64);
+        enemy.setPosition(60, 880);
+        enemy.animation.setFileName("assets/monster.png");
+        enemy.animation.setAnimation(0, 0, enemy.getWidth(), enemy.getHeight(), 92);
+        enemy.setTexture();
+        //enemy.enemyRect.setTexture(&enemy.getTexture());
+        enemy.enemyRect.setOrigin(24, 32);
+        enemy.setEnemyShape();
+    }
+}
+
 void Level::destroyLevel() {
     platforms.clear();
     grapplePoints.clear();
+    deathZone.clear();
+
+    if (levelOneComplete && levelTwoComplete) {
+        lever.setPosition({ 3000, 3000 });
+        door.setPosition({ 3500, 3500 });
+    }
 }
 
 void Level::draw(sf::RenderWindow& window) {
@@ -123,10 +180,8 @@ void Level::setGrapplePoints() {
     for (int i = 0; i < grapplePoints.size(); i++) {
         grapplePoints[i].setTexture(grappleStone);
         grapplePoints[i].setScale(0.2, 0.2);
+        grapplePoints[i].setOrigin({ grapplePoints[i].getGlobalBounds().width / 2, grapplePoints[i].getGlobalBounds().height / 2 });
     }
-
-    grapplePoints[0].setPosition({ 200, 600 });
-    grapplePoints[1].setPosition({ 400, 800 });
 }
 
 void Level::setBackground(std::string fileName) {

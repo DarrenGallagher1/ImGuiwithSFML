@@ -15,6 +15,7 @@ public:
 	float switchTime = 0.8;
 	float totalTime;
 	bool flipped;
+	bool attack;
 
 	void setFileName(std::string fileName);
 	void setAnimation(int startX, int startY, int width, int height, int endPoint);

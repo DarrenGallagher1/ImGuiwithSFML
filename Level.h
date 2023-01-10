@@ -1,4 +1,5 @@
 #pragma once
+class Enemy;
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "SFML/Graphics.hpp"
@@ -7,6 +8,10 @@
 
 class Level
 {
+
+private:
+	Enemy* enemy;
+
 public:
 	std::vector<Platform> platforms;
 	std::vector<Platform> deathZone;
@@ -23,12 +28,15 @@ public:
 	sf::Texture doorTexture;
 	sf::Texture grappleStone;
 	sf::Texture backgroundTexture;
-	bool leverPulled;
-	bool levelSwitch;
+	bool leverPulled = false;
+	bool levelSwitch = false;
+	bool levelOneComplete = false;
+	bool levelTwoComplete = false;
+	bool levelThreeComplete = false;
 	
-
 	void buildLevelOnePlatforms();
 	void buildLevelTwoPlatforms();
+	void buildLevelThreePlatforms(Enemy &enemy);
 	void destroyLevel();
 	void draw(sf::RenderWindow& window);
 	void setFileName(std::string fileName);

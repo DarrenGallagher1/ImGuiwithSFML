@@ -19,7 +19,7 @@ private:
 	float width;
 	float vely;
 	float indirVelX = 0.f;
-	float gravity = 0.7;
+	float gravity = 0.7f;
 	float groundHeight = 930.f;
 	bool lift = false;
 	bool onLedge = false;
@@ -27,9 +27,15 @@ private:
 	sf::Texture texture;
 	sf::Color borderColor;
 	sf::Color colour;
+	float healthBarX = 20.f;
+	float healthBarY = 20.f;
+
+	sf::Vector2f playerHealth = sf::Vector2f(100.f, 20.f);
+
+	float decreaseHealth = 10.f;
 
 public:
-
+	sf::RectangleShape healthBar;
 	bool cangrapple = false;
 	bool grappletopoint = false;
 	bool shot = false;
@@ -92,14 +98,25 @@ public:
 	void checkBounds(std::vector<Platform> platforms);
 	void setRope(sf::Sprite grapplePoint);
 	void drawRope(sf::RenderWindow& window);
-	bool checkGrapplePath(Platform ledges[], int arraysize, Platform grapplePoint);
+	bool checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePoint);
+	void checkDoor(Level& level);
+	void attack();
+
+	float getHealthBarPositionX();
+	float getHealthBarPositionY();
+	void setHealthBarPosition(float x, float y);
+	float getDecreaseHealth();
+	sf::Vector2f getPlayerHealth();
+	void setPlayerHealth();
+
+	void setHealthBarShape();
 
 	Player(float posx, float posy, float width, float height, std::string fileName) {
 		setPosition(posx, posy);
 		setSize(width, height);
 		setGroundHeight(1013.f);
 		animation.setFileName(fileName);
-		animation.setAnimation(0, 0, width, height, 300);
+		animation.setAnimation(0.f, 0.f, width, height, 300.f);
 		setTexture();
 		rect.setTexture(&texture);
 		setShape();

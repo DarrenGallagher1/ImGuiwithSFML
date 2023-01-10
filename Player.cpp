@@ -109,13 +109,14 @@ void Player::movePlayer() {
 void Player::update(sf::RenderWindow& window) {
 	jump();
 	movePlayer();
+	attack();
 	animation.Animate(rect, animation.switchTime);
 	window.draw(rect);
-	window.draw(topBound);
+	/*window.draw(topBound);
 	window.draw(leftBound);
 	window.draw(bottomBound);
 	window.draw(rightBound);
-	window.draw(hurtBox);
+	window.draw(hurtBox);*/
 }
 
 sf::FloatRect Player::getBounds() {
@@ -163,7 +164,6 @@ void Player::anchor(Platform platform) {
 
 		if (getOnLedge()) {
 			setGroundHeight(platform.getPositionY() - rect.getGlobalBounds().height / 2 + 1.f);
-			//setIndirVelX(platform.getXVelocity());
 		} else {
 			setIndirVelX(0.f);
 		}
@@ -321,15 +321,15 @@ void Player::drawRope(sf::RenderWindow& window) {
 	window.draw(rope, 5, sf::LineStrip);
 }
 
-bool Player::checkGrapplePath(Platform ledges[], int arraysize, Platform grapplePoint) {
+bool Player::checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePoint) {
 	bool pathClear;
 
-	if (posx >= grapplePoint.getPositionX()) {
-		distancex = posx - grapplePoint.getPositionX();
-		distancey = grapplePoint.getPositionY() - posy;
+	if (posx >= grapplePoint.getPosition().x) {
+		distancex = posx - grapplePoint.getPosition().x;
+		distancey = grapplePoint.getPosition().y - posy;
 	} else {
-		distancex = grapplePoint.getPositionX() - posx;
-		distancey = posy - grapplePoint.getPositionY();
+		distancex = grapplePoint.getPosition().x - posx;
+		distancey = posy - grapplePoint.getPosition().y;
 	}
 
 	distance = sqrt((distancex * distancex) + (distancey * distancey));
@@ -340,11 +340,11 @@ bool Player::checkGrapplePath(Platform ledges[], int arraysize, Platform grapple
 
 	long angle = atan(tandistance) * (180 / 3.14);
 
-	if (posx > grapplePoint.getPositionX()) {
+	if (posx > grapplePoint.getPosition().x) {
 		angle = (360.f - angle) + 180.f;
 	}
 
-	if (posx < grapplePoint.getPositionX()) {
+	if (posx < grapplePoint.getPosition().x) {
 		angle = 360.f - angle;
 	}
 
@@ -352,7 +352,7 @@ bool Player::checkGrapplePath(Platform ledges[], int arraysize, Platform grapple
 	sf::FloatRect bounds = path.getGlobalBounds();
 	angle = 0.f;
 
-	for (int i = 0; i < arraysize; i++) {
+	for (int i = 0; i < ledges.size(); i++) {
 		if (bounds.intersects(ledges[i].getBounds())) {
 			pathClear = false;
 			break;
@@ -363,19 +363,78 @@ bool Player::checkGrapplePath(Platform ledges[], int arraysize, Platform grapple
 	return pathClear;
 }
 
-//void Player::assignGrapplePoint(std::vector<sf::Sprite> grapplePoints) {
-//
-//	for (int i = 0; i < grapplePoints.size(); i++) {
-//
-//		if (posx >= grapplePoints[i].getPosition().x) {
-//			distancex = posx - grapplePoint.getPosition().x;
-//			distancey = grapplePoint.getPosition().y - posy;
-//		}
-//		else {
-//			distancex = grapplePoints[i].getPosition().x - posx;
-//			distancey = posy - grapplePoint.getPosition().y;
-//		}
-//
-//		distance = sqrt((distancex * distancex) + (distancey * distancey));
-//	}
-//}
+void Player::checkDoor(Level& level) {
+	if (level.leverPulled && rect.getGlobalBounds().intersects(level.door.getGlobalBounds())) {
+
+		if (level.levelTwoComplete && level.levelOneComplete) {
+			level.levelThreeComplete = true;;
+		} else if (level.levelOneComplete) {
+			level.levelTwoComplete = true;
+		} else {
+			level.levelOneComplete = true;
+		}
+		level.levelSwitch = true;
+	}
+}
+
+void Player::setHealthBarPosition(float x, float y) {
+	this->healthBarX = x;
+	this->healthBarY = y;
+}
+
+float Player::getHealthBarPositionX() {
+	return healthBarX;
+}
+
+float Player::getHealthBarPositionY()
+{
+	return healthBarY;
+}
+
+float Player::getDecreaseHealth()
+{
+	return decreaseHealth;
+}
+
+sf::Vector2f Player::getPlayerHealth() {
+	return playerHealth;
+}
+
+void Player::setPlayerHealth()
+{
+	playerHealth.x -= decreaseHealth;
+
+	if (playerHealth.x < 0) {
+		playerHealth.x = 0;
+	}
+	if (playerHealth.x == 0) {
+		animation.setStartEndPoints(1400, 1500);
+		setPosition(2000, 1000);
+		healthBar.setFillColor(sf::Color::Transparent);
+	}
+}
+
+void Player::setHealthBarShape() {
+	healthBar = sf::RectangleShape(playerHealth);
+	healthBar.setFillColor(sf::Color::Green);
+	healthBar.setPosition(healthBarX, healthBarY);
+	healthBar.setScale(2.f, 1.f);
+
+}
+
+void Player::attack() {
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && !cangrapple) {
+		animation.attack = true;
+	}
+	if (animation.attack == true) {
+		animation.setStartEndPoints(1000, 1300);
+		animation.switchTime = 0.7;
+
+		if (animation.coordinates.left >= animation.endPoint) {
+			animation.attack = false;
+			animation.setStartEndPoints(0, 300);
+			animation.switchTime = 1;
+		}
+	}
+}

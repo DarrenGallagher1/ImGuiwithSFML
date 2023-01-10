@@ -7,6 +7,8 @@
 #include "Platform.h"
 #include "Player.h"
 #include "Level.h"
+#include "Enemy.h"
+#include "Animation.h"
 #include <array>
 #include <iostream>
 
@@ -18,17 +20,18 @@ bool pause = false;
 bool yellow = false;
 float direction;
 
+
 int main() {
     sf::RenderWindow window(sf::VideoMode(winWidth, winHeight), "ImGui + SFML");
     window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
 
     sf::Sprite grapplePoint;
-    Platform grapplePoint2(540.f, 860.f, 5.f, 5.f);
-
     Level level;
     level.setBackground("assets/lvl1.png");
     Player dwarf(355.f, 800.f, 100.f, 80.f, "dwarves.png");
+
+    Enemy enemy(2000, 2880, 48, 64, "assets/monster.png", 48, 92);
 
     sf::Clock deltaClock;
 
@@ -60,29 +63,41 @@ int main() {
             if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Enter) {
                 pause = !pause;
                 level.levelSwitch = true;
-                //chNGE
             }
 
         }
 
         if (!pause) {
 
-            ImGui::SFML::Update(window, deltaClock.restart());
-            level.destroyLevel();
-            level.buildLevelOnePlatforms();
+            dwarf.checkDoor(level);
+
+            if (!level.levelOneComplete && !level.levelTwoComplete && !level.levelThreeComplete) {
+
+                ImGui::SFML::Update(window, deltaClock.restart());
+                level.destroyLevel();
+                
+                level.buildLevelOnePlatforms();
+            }
+
+            else if (level.levelOneComplete && !level.levelTwoComplete) {
+
+                ImGui::SFML::Update(window, deltaClock.restart());
+                level.destroyLevel();
+                level.buildLevelTwoPlatforms();
+            }
+
+            else if (level.levelOneComplete && level.levelTwoComplete) {
+                ImGui::SFML::Update(window, deltaClock.restart());
+                level.destroyLevel();
+                level.buildLevelThreePlatforms(enemy);
+            }
 
             window.clear();
             window.draw(level.background);
 
-            /*ledges[0].movePlatformX(300.f, 600.f);*/
-
             dwarf.setVelX();
 
             ImGui::SFML::Render(window);
-
-            /*for (int i = 0; i < 5; i++) {
-                ledges[i].draw(window);
-            }*/
 
             level.draw(window);
 
@@ -99,12 +114,11 @@ int main() {
                         break;
                     }
                 }
-                
 
-                /*if (!dwarf.checkGrapplePath(ledges, 5, grapplePoint)) {
+                if (!dwarf.checkGrapplePath(level.platforms, grapplePoint)) {
                     dwarf.cangrapple = false;
                     dwarf.grappletopoint = false;
-                }*/
+                }
 
                 if (dwarf.getPositionX() > grapplePoint.getPosition().x) {
                     direction = -1.f;
@@ -114,11 +128,14 @@ int main() {
                     direction = 1.f;
                     dwarf.animation.flipped = true;
                 }
-                
+
             }
 
+            enemy.moveEnemyX(100.f, winWidth - 100.f);
+            enemy.enemyCollision(dwarf);
+            enemy.update(window);
+
             dwarf.shoot(level.platforms, window);
-            
             dwarf.checkBounds(level.platforms);
             dwarf.update(window);
             window.draw(dwarf.bullet);
@@ -127,10 +144,8 @@ int main() {
                 dwarf.grapple(grapplePoint, direction);
             }
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::G)) {
+            if (dwarf.rect.getGlobalBounds().intersects(level.lever.getGlobalBounds())) {
                 level.leverPulled = true;
-            } else {
-                level.leverPulled = false;
             }
 
             if (dwarf.grappletopoint) {
@@ -138,32 +153,9 @@ int main() {
                 dwarf.drawRope(window);
             }
 
-            std::cout << dwarf.bullet.getPosition().x << " " << dwarf.bullet.getPosition().y << std::endl;
+            std::cout << level.levelOneComplete << " " << level.levelTwoComplete << std::endl;
             window.display();
         }
-
-        if (pause) {
-
-            window.clear();
-            level.destroyLevel();
-            level.buildLevelTwoPlatforms();
-            window.draw(level.background);
-
-            /*target.setPosition(250.f, 250.f);
-            target.setFillColor(sf::Color::Cyan);*/
-
-            sf::Vector2i position = sf::Mouse::getPosition(window);
-            sf::Vector2f tracker = window.mapPixelToCoords(position);
-
-            
-            dwarf.setVelX();
-            dwarf.checkBounds(level.platforms);
-            dwarf.update(window);
-            level.draw(window);
-
-            window.display();
-        }
-    }
-
+    } 
     ImGui::SFML::Shutdown();
 }
