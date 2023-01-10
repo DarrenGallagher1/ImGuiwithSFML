@@ -1,16 +1,16 @@
 #include "Player.h"
 
 void Player::setPosition(float x, float y) {
-	this->posx = x;
-	this->posy = y;
+	this->playerPosition.x = x;
+	this->playerPosition.y = y;
 }
 
 float Player::getPositionX() {
-	return posx;
+	return playerPosition.x;
 }
 
 float Player::getPositionY() {
-	return posy;
+	return playerPosition.y;
 }
 
 void Player::setSize(float w, float h) {
@@ -40,11 +40,11 @@ void Player::setShapeColour(sf::Color colour) {
 
 void Player::setShape() {
 	rect.setSize({ width, height });
-	rect.setPosition({ posx, posy });
-	topBound.setPosition({ posx - rect.getGlobalBounds().width / 4 + 1.f, posy - rect.getGlobalBounds().height / 4 });
-	leftBound.setPosition({ posx - rect.getGlobalBounds().width / 4 - leftBound.getGlobalBounds().width, posy - rect.getGlobalBounds().height / 4 + 15.f });
-	rightBound.setPosition({ posx + rect.getGlobalBounds().width / 4, posy - rect.getGlobalBounds().height / 4 + 15.f });
-	bottomBound.setPosition({ posx - rect.getGlobalBounds().width / 4 + 5.f, posy + rect.getGlobalBounds().height / 2 + 1.f });
+	rect.setPosition({ playerPosition.x, playerPosition.y });
+	topBound.setPosition({ playerPosition.x - rect.getGlobalBounds().width / 4 + 1.f, playerPosition.y - rect.getGlobalBounds().height / 4 });
+	leftBound.setPosition({ playerPosition.x - rect.getGlobalBounds().width / 4 - leftBound.getGlobalBounds().width, playerPosition.y - rect.getGlobalBounds().height / 4 + 15.f });
+	rightBound.setPosition({ playerPosition.x + rect.getGlobalBounds().width / 4, playerPosition.y - rect.getGlobalBounds().height / 4 + 15.f });
+	bottomBound.setPosition({ playerPosition.x - rect.getGlobalBounds().width / 4 + 5.f, playerPosition.y + rect.getGlobalBounds().height / 2 + 1.f });
 }
 
 void Player::setGroundHeight(float height) {
@@ -53,57 +53,57 @@ void Player::setGroundHeight(float height) {
 
 void Player::setVelX() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !cangrapple) {
-		velx = -5.f + indirVelX;
+		playerVelocity.x = -5.f + indirVelX;
 		animation.setStartEndPoints(400, 900);
 		animation.flipped = false;
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !cangrapple) {
-		velx = 5.f + indirVelX;
+		playerVelocity.x = 5.f + indirVelX;
 		animation.setStartEndPoints(400, 900);
 		animation.flipped = true;
 	} else {
 		animation.setStartEndPoints(0, 300);
-		velx = indirVelX;
+		playerVelocity.x = indirVelX;
 	}
 }
 
 void Player::setGrappleVelocity(float velx, float vely) {
-	this->velx = velx;
-	this->vely = vely;
+	playerVelocity.x = velx;
+	playerVelocity.y = vely;
 }
 
 void Player::jump() {
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && vely == 0 && lift == true) {
-		vely = -15.f;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && playerVelocity.y == 0 && lift == true) {
+		playerVelocity.y = -15.f;
 		lift = false;
 		onLedge = false;
 		indirVelX = 0.f;
 	}
 
-	if (posy > (this->groundHeight)) {
-		posy = this->groundHeight;
-		vely = 0;
+	if (playerPosition.y > (this->groundHeight)) {
+		playerPosition.y = this->groundHeight;
+		playerVelocity.y = 0;
 		lift = true;
 		animation.switchTime = 1.0;
 	}
 
-	if (posy < (this->groundHeight)) {
-		if (vely < 13.f) {
-			vely += gravity;
+	if (playerPosition.y < (this->groundHeight)) {
+		if (playerVelocity.y < 13.f) {
+			playerVelocity.y += gravity;
 			animation.switchTime = 0.3;
 		}
 	}
 }
 
 void Player::movePlayer() {
-	posx += velx;
-	posy += vely;
-	rect.setPosition({ posx, posy });
-	topBound.setPosition({ posx - rect.getGlobalBounds().width / 4 + 1.f, posy - rect.getGlobalBounds().height / 4});
-	leftBound.setPosition({ posx - rect.getGlobalBounds().width / 4 - leftBound.getGlobalBounds().width, posy - rect.getGlobalBounds().height / 4 + 15.f});
-	rightBound.setPosition({ posx + rect.getGlobalBounds().width / 4, posy - rect.getGlobalBounds().height / 4 + 15.f});
-	bottomBound.setPosition({ posx - rect.getGlobalBounds(). width / 4 + 5.f, posy + rect.getGlobalBounds().height / 2 + 1.f});
-	hurtBox.setPosition(posx + (rect.getGlobalBounds().width / 4), posy + (rect.getGlobalBounds().height / 4));
+	playerPosition.x += playerVelocity.x;
+	playerPosition.y += playerVelocity.y;
+	rect.setPosition(playerPosition);
+	topBound.setPosition({ playerPosition.x - rect.getGlobalBounds().width / 4 + 1.f, playerPosition.y - rect.getGlobalBounds().height / 4});
+	leftBound.setPosition({ playerPosition.x - rect.getGlobalBounds().width / 4 - leftBound.getGlobalBounds().width, playerPosition.y - rect.getGlobalBounds().height / 4 + 15.f});
+	rightBound.setPosition({ playerPosition.x + rect.getGlobalBounds().width / 4, playerPosition.y - rect.getGlobalBounds().height / 4 + 15.f});
+	bottomBound.setPosition({ playerPosition.x - rect.getGlobalBounds(). width / 4 + 5.f, playerPosition.y + rect.getGlobalBounds().height / 2 + 1.f});
+	hurtBox.setPosition(playerPosition.x + (rect.getGlobalBounds().width / 4), playerPosition.y + (rect.getGlobalBounds().height / 4));
 }
 
 void Player::update(sf::RenderWindow& window) {
@@ -124,7 +124,7 @@ sf::FloatRect Player::getBounds() {
 }
 
 float Player::getVelY() {
-	return vely;
+	return playerVelocity.y;
 }
 
 sf::RectangleShape Player::getShape() {
@@ -144,11 +144,11 @@ bool Player::getAnchor() {
 }
 
 void Player::setVelY(float vely) {
-	this->vely = vely;
+	playerVelocity.y = vely;
 }
 
 float Player::getVelX() {
-	return velx;
+	return this->playerVelocity.x;
 }
 
 bool Player::getOnLedge() {
@@ -157,6 +157,21 @@ bool Player::getOnLedge() {
 
 void Player::setOnLedge(bool onLedge) {
 	this->onLedge = onLedge;
+}
+
+void Player::setDistanceBetween(sf::Vector2f targetDistance) {
+	distanceBetween.x = targetDistance.x - playerPosition.x;
+	distanceBetween.y = targetDistance.y - playerPosition.y;
+}
+
+sf::Vector2f Player::getDistanceBetween() {
+	return this->distanceBetween;
+}
+
+float Player::getInversedDistance() {
+	distance = sqrt((distanceBetween.x * distanceBetween.x) + (distanceBetween.y * distanceBetween.y));
+	inverseDistance = 1.f / distance;
+	return inverseDistance;
 }
 
 void Player::anchor(Platform platform) {
@@ -172,13 +187,12 @@ void Player::anchor(Platform platform) {
 //grapple physics. need to take a snapshot of the hypotenuse and then pass into method. A seperate method might be needed
 void Player::grapple(sf::Sprite grapplePoint, float direction) {
 
-	distancex = grapplePoint.getPosition().x - posx;
-	distancey = grapplePoint.getPosition().y - posy;
-	distance = sqrt((distancex * distancex) + (distancey * distancey));
+	setDistanceBetween(grapplePoint.getPosition());
+	distance = sqrt((distanceBetween.x * distanceBetween.x) + (distanceBetween.y * distanceBetween.y));
 	inverseDistance = 1.f / distance;
 
-	float normalisedDistanceX = distancex * inverseDistance;
-	float normalisedDistanceY = distancey * inverseDistance;
+	float normalisedDistanceX = distanceBetween.x * inverseDistance;
+	float normalisedDistanceY = distanceBetween.y * inverseDistance;
 	float dropoff;
 
 	if (rect.getGlobalBounds().intersects(grapplePoint.getGlobalBounds()) && grappletopoint == true) {
@@ -205,7 +219,7 @@ void Player::grapple(sf::Sprite grapplePoint, float direction) {
 		setIndirVelX(0.f);
 	}
 
-	setPosition((posx + velx), (posy + vely));
+	setPosition((playerPosition.x + playerVelocity.x), (playerPosition.y + playerVelocity.y));
 }
 
 void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
@@ -213,9 +227,9 @@ void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
 	if (shot) {
 
 		if (animation.flipped) {
-			bullet.setPosition((posx + rect.getGlobalBounds().width / 4), posy);
+			bullet.setPosition((playerPosition.x + rect.getGlobalBounds().width / 4), playerPosition.y);
 		} else {
-			bullet.setPosition((posx - rect.getGlobalBounds().width / 4), posy);
+			bullet.setPosition((playerPosition.x - rect.getGlobalBounds().width / 4), playerPosition.y);
 		}
 
 		bullet.setSize({ 4.f, 4.f });
@@ -230,13 +244,13 @@ void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
 		float normalisedDistanceX = bulletdistancex * bulletInverseDistance;
 		float normalisedDistanceY = bulletdistancey * bulletInverseDistance;
 
-		bulletsVelX = normalisedDistanceX * 10.f;
-		bulletsVelY = normalisedDistanceY * 10.f;
+		bulletVelocityX = normalisedDistanceX * 10.f;
+		bulletVelocityY = normalisedDistanceY * 10.f;
 
 		shot = false;
 	}
 
-	bullet.move({ bulletsVelX, bulletsVelY });
+	bullet.move({ bulletVelocityX, bulletVelocityY });
 
 	for (int i = 0; i < ledges.size(); i++) {
 
@@ -273,7 +287,7 @@ void Player::checkBounds(std::vector<Platform> platforms) {
 
 		if (rightBound.getGlobalBounds().intersects(platforms[i].getBounds())) {
 			if (getVelX() > 0.f) {
-				velx = 0.f;
+				playerVelocity.x = 0.f;
 				break;
 			}
 		}
@@ -283,7 +297,7 @@ void Player::checkBounds(std::vector<Platform> platforms) {
 
 		if (leftBound.getGlobalBounds().intersects(platforms[i].getBounds())) {
 			if (getVelX() < 0.f) {
-				velx = 0.f;
+				playerVelocity.x = 0.f;
 				break;
 			}
 		}
@@ -293,7 +307,7 @@ void Player::checkBounds(std::vector<Platform> platforms) {
 
 		if (topBound.getGlobalBounds().intersects(platforms[i].getBounds())) {
 			if (getVelY() < 0.f) {
-				vely = 0.f;
+				playerVelocity.y = 0.f;
 				break;
 			}
 		}
@@ -305,15 +319,15 @@ void Player::setTexture() {
 }
 
 void Player::setRope(sf::Sprite grapplePoint) {
-	rope[0].position = sf::Vector2f(posx, posy);
+	rope[0].position = sf::Vector2f(playerPosition);
 	rope[0].color = sf::Color::Red;
 	rope[1].position = sf::Vector2f(grapplePoint.getPosition().x, grapplePoint.getPosition().y);
 	rope[1].color = sf::Color::Red;
 	rope[2].position = sf::Vector2f(grapplePoint.getPosition().x, grapplePoint.getPosition().y + 2.f);
 	rope[2].color = sf::Color::Red;
-	rope[3].position = sf::Vector2f(posx, posy + 2.f);
+	rope[3].position = sf::Vector2f(playerPosition.x, playerPosition.y + 2.f);
 	rope[3].color = sf::Color::Red;
-	rope[4].position = sf::Vector2f(posx, posy);
+	rope[4].position = sf::Vector2f(playerPosition.x, playerPosition.y);
 	rope[4].color = sf::Color::Red;
 }
 
@@ -321,30 +335,38 @@ void Player::drawRope(sf::RenderWindow& window) {
 	window.draw(rope, 5, sf::LineStrip);
 }
 
+bool Player::isLeftOf(float currentPositionX, float targetPositionX) {
+	if (currentPositionX < targetPositionX) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 bool Player::checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePoint) {
 	bool pathClear;
 
-	if (posx >= grapplePoint.getPosition().x) {
-		distancex = posx - grapplePoint.getPosition().x;
-		distancey = grapplePoint.getPosition().y - posy;
+	if (!isLeftOf(playerPosition.x, grapplePoint.getPosition().x)) {
+		distanceBetween.x = playerPosition.x - grapplePoint.getPosition().x;
+		distanceBetween.y = grapplePoint.getPosition().y - playerPosition.y;
 	} else {
-		distancex = grapplePoint.getPosition().x - posx;
-		distancey = posy - grapplePoint.getPosition().y;
+		distanceBetween.x = grapplePoint.getPosition().x - playerPosition.x;
+		distanceBetween.y = playerPosition.y - grapplePoint.getPosition().y;
 	}
 
-	distance = sqrt((distancex * distancex) + (distancey * distancey));
-	float tandistance = distancey / distancex;
+	distance = sqrt((distanceBetween.x * distanceBetween.x) + (distanceBetween.y * distanceBetween.y));
+	float tandistance = distanceBetween.y / distanceBetween.x;
 	sf::RectangleShape path;
 	path.setSize({distance, 2.f});
 	path.setPosition(rect.getPosition());
 
 	long angle = atan(tandistance) * (180 / 3.14);
 
-	if (posx > grapplePoint.getPosition().x) {
+	if (!isLeftOf(playerPosition.x, grapplePoint.getPosition().x)) {
 		angle = (360.f - angle) + 180.f;
 	}
 
-	if (posx < grapplePoint.getPosition().x) {
+	if (isLeftOf(playerPosition.x, grapplePoint.getPosition().x)) {
 		angle = 360.f - angle;
 	}
 

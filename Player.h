@@ -14,13 +14,24 @@ private:
 	
 	const float SCREENWIDTH = 1800.f;
 	const float SCREENHEIGHT = 1013.f;
-	float posy;
+	sf::Vector2f playerPosition;
+	sf::Vector2f playerVelocity;
+	sf::Vector2f distanceBetween;
+
+	float distance;
 	float height;
 	float width;
-	float vely;
 	float indirVelX = 0.f;
 	float gravity = 0.7f;
 	float groundHeight = 930.f;
+	float bulletdistancex;
+	float bulletdistancey;
+	float bulletVelocityX;
+	float bulletVelocityY;
+	float ndistancex;
+	float ndistancey;
+	float inverseDistance;
+	float bulletInverseDistance;
 	bool lift = false;
 	bool onLedge = false;
 	bool anchored;
@@ -40,26 +51,13 @@ public:
 	bool grappletopoint = false;
 	bool shot = false;
 	bool ropeGrow = false;
-	float distancex;
-	float distancey;
-	float distance;
-	float bulletdistancex;
-	float bulletdistancey;
-	float ndistancex;
-	float ndistancey;
-	float inverseDistance;
-	float bulletInverseDistance;
-	float accelx, accely;
 	sf::RectangleShape bullet;
-	float bulletsVelX;
-	float bulletsVelY;
+	
 	sf::RectangleShape topBound;
 	sf::RectangleShape leftBound;
 	sf::RectangleShape rightBound;
 	sf::RectangleShape bottomBound;
 	sf::RectangleShape hurtBox;
-	float velx;
-	float posx;
 	Animation animation;
 	sf::RectangleShape rect;
 	sf::Vertex rope[5];
@@ -74,6 +72,7 @@ public:
 	float getGroundHeight();
 	void setAnchor(bool anchor);
 	bool getAnchor();
+	bool isLeftOf(float currentPositionX,float targetPositionX);
 	void setColour(sf::Color colour);
 	void setShape();
 	void setTexture();
@@ -83,6 +82,10 @@ public:
 	void setVelY(float vely);
 	float getVelY();
 	void setGrappleVelocity(float velx, float vely);
+	void setDistanceBetween(sf::Vector2f targetPosition);
+	sf::Vector2f getDistanceBetween();
+	float getInversedDistance();
+
 	void jump();
 	void update(sf::RenderWindow& window);
 	void movePlayer();
@@ -114,7 +117,6 @@ public:
 	Player(float posx, float posy, float width, float height, std::string fileName) {
 		setPosition(posx, posy);
 		setSize(width, height);
-		setGroundHeight(1013.f);
 		animation.setFileName(fileName);
 		animation.setAnimation(0.f, 0.f, width, height, 300.f);
 		setTexture();
