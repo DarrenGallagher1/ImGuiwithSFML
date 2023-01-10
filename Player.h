@@ -92,7 +92,6 @@ public:
 	void checkBounds(std::vector<Platform> platforms);
 	void setRope(sf::Sprite grapplePoint);
 	void drawRope(sf::RenderWindow& window);
-	/*void assignGrapplePoint(std::vector<sf::Sprite> grapplePoints);*/
 	bool checkGrapplePath(Platform ledges[], int arraysize, Platform grapplePoint);
 
 	Player(float posx, float posy, float width, float height, std::string fileName) {

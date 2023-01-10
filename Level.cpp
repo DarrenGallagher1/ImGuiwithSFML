@@ -27,6 +27,7 @@ void Level::buildLevelOnePlatforms() {
 
     setLever(1644.f, 336.f);
     setDoor(113, 88);
+
     if (levelSwitch) {
         setBackground("assets/lvl1.png");
         levelSwitch = false;

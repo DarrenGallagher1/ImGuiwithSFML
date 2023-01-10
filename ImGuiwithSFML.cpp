@@ -60,6 +60,7 @@ int main() {
             if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Enter) {
                 pause = !pause;
                 level.levelSwitch = true;
+                //chNGE
             }
 
         }
