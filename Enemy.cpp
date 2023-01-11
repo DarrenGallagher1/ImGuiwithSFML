@@ -122,11 +122,12 @@ void Enemy::enemyCollision(Player &player) {
 			setScaleValues(3.f, 3.f);
 		}
 	}
-	if (enemyRect.getGlobalBounds().intersects(player.bullet.getGlobalBounds()) && player.bullet.getFillColor() == sf::Color::White) {
+	if (enemyRect.getGlobalBounds().intersects(player.bullet.getGlobalBounds())) {
 		setEnemyHealth();
 		setScaleValues(0.f, 0.f);
-		if (enemyRect.getGlobalBounds().intersects(player.bullet.getGlobalBounds()) && player.bullet.getFillColor() == sf::Color::White) {
-			player.bullet.setFillColor(sf::Color::Transparent);
+		if (enemyRect.getGlobalBounds().intersects(player.bullet.getGlobalBounds())) {
+			player.bullet.setPosition(player.getPositionX(), player.getPositionY());
+			player.bullet.setScale(0.f, 0.f);
 		}
 	}
 

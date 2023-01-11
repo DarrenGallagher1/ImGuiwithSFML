@@ -13,6 +13,10 @@ float Player::getPositionY() {
 	return playerPosition.y;
 }
 
+sf::Vector2f Player::getPosition() {
+	return this->playerPosition;
+}
+
 void Player::setSize(float w, float h) {
 	this->width = w;
 	this->height = h;
@@ -106,10 +110,10 @@ void Player::movePlayer() {
 	hurtBox.setPosition(playerPosition.x + (rect.getGlobalBounds().width / 4), playerPosition.y + (rect.getGlobalBounds().height / 4));
 }
 
-void Player::update(sf::RenderWindow& window) {
+void Player::update(std::vector<Platform> ledges, sf::RenderWindow& window) {
 	jump();
 	movePlayer();
-	attack();
+	attack(ledges, window);
 	animation.Animate(rect, animation.switchTime);
 	window.draw(rect);
 	/*window.draw(topBound);
@@ -187,75 +191,93 @@ void Player::anchor(Platform platform) {
 //grapple physics. need to take a snapshot of the hypotenuse and then pass into method. A seperate method might be needed
 void Player::grapple(sf::Sprite grapplePoint, float direction) {
 
-	setDistanceBetween(grapplePoint.getPosition());
-	distance = sqrt((distanceBetween.x * distanceBetween.x) + (distanceBetween.y * distanceBetween.y));
-	inverseDistance = 1.f / distance;
+	if (cangrapple) {
 
-	float normalisedDistanceX = distanceBetween.x * inverseDistance;
-	float normalisedDistanceY = distanceBetween.y * inverseDistance;
-	float dropoff;
+		setDistanceBetween(grapplePoint.getPosition());
+		distance = sqrt((distanceBetween.x * distanceBetween.x) + (distanceBetween.y * distanceBetween.y));
+		inverseDistance = 1.f / distance;
 
-	if (rect.getGlobalBounds().intersects(grapplePoint.getGlobalBounds()) && grappletopoint == true) {
-		grappletopoint = false;
-		dropoff = normalisedDistanceX;
-		setVelY(10.f * normalisedDistanceY);
+		float normalisedDistanceX = distanceBetween.x * inverseDistance;
+		float normalisedDistanceY = distanceBetween.y * inverseDistance;
+		float dropoff;
+
+		if (rect.getGlobalBounds().intersects(grapplePoint.getGlobalBounds()) && grappletopoint == true) {
+			grappletopoint = false;
+			dropoff = normalisedDistanceX;
+			setVelY(10.f * normalisedDistanceY);
+		}
+
+		if (dropoff < 0) {
+			dropoff = dropoff * -1;
+		}
+
+		if (grappletopoint) {
+			setIndirVelX(normalisedDistanceX * 10.f);
+			setVelY(normalisedDistanceY * 10.f);
+		}
+
+		if (grappletopoint == false && cangrapple == true) {
+			setIndirVelX(10.f * direction * dropoff);
+		}
+
+		if (getPositionY() >= getGroundHeight() - 1.f) {
+			cangrapple = false;
+			setIndirVelX(0.f);
+		}
+
+		setPosition((playerPosition.x + playerVelocity.x), (playerPosition.y + playerVelocity.y));
 	}
+}
 
-	if (dropoff < 0) {
-		dropoff = dropoff * -1;
-	}
+float Player::getAngle(float sideX, float sideY) {
 
-	if (grappletopoint) {
-		setIndirVelX(normalisedDistanceX * 10.f);
-		setVelY(normalisedDistanceY * 10.f);
-	}
+	float tanOfSides = sideY / sideX;
 
-	if (grappletopoint == false && cangrapple == true) {
-		setIndirVelX(10.f * direction * dropoff);
-	}
+	float angle = atan(tanOfSides) * (180 / 3.14159);
 
-	if (getPositionY() >= getGroundHeight() - 1.f) {
-		cangrapple = false;
-		setIndirVelX(0.f);
-	}
-
-	setPosition((playerPosition.x + playerVelocity.x), (playerPosition.y + playerVelocity.y));
+	return angle;
 }
 
 void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
 
-	if (shot) {
+	if (shot && isBow) {
 
 		if (animation.flipped) {
 			bullet.setPosition((playerPosition.x + rect.getGlobalBounds().width / 4), playerPosition.y);
+			bullet.setScale(1.f, 1.f);
 		} else {
 			bullet.setPosition((playerPosition.x - rect.getGlobalBounds().width / 4), playerPosition.y);
+			bullet.setScale(-1.f, 1.f);
 		}
 
-		bullet.setSize({ 4.f, 4.f });
-		bullet.setFillColor(sf::Color::White);
+		bulletTexture.loadFromFile("assets/arrow.png");
+		bullet.setTexture(bulletTexture);
 
-		bulletdistancex = sf::Mouse::getPosition(window).x - (bullet.getPosition().x);
-		bulletdistancey = sf::Mouse::getPosition(window).y - (bullet.getPosition().y);
+		bulletDistanceBetween.x = sf::Mouse::getPosition(window).x - (bullet.getPosition().x);
+		bulletDistanceBetween.y = sf::Mouse::getPosition(window).y - (bullet.getPosition().y);
 
-		float distance = sqrt((bulletdistancex * bulletdistancex) + (bulletdistancey * bulletdistancey));
+		float distance = sqrt((bulletDistanceBetween.x * bulletDistanceBetween.x) + (bulletDistanceBetween.y * bulletDistanceBetween.y));
 		bulletInverseDistance = 1.f / distance;
 
-		float normalisedDistanceX = bulletdistancex * bulletInverseDistance;
-		float normalisedDistanceY = bulletdistancey * bulletInverseDistance;
+		float normalisedDistanceX = bulletDistanceBetween.x * bulletInverseDistance;
+		float normalisedDistanceY = bulletDistanceBetween.y * bulletInverseDistance;
 
-		bulletVelocityX = normalisedDistanceX * 10.f;
-		bulletVelocityY = normalisedDistanceY * 10.f;
+		bulletVelocity.x = normalisedDistanceX * 15.f;
+		bulletVelocity.y = normalisedDistanceY * 15.f;
+
+		bullet.setRotation(getAngle(bulletDistanceBetween.x, bulletDistanceBetween.y) - 180.f);
 
 		shot = false;
 	}
 
-	bullet.move({ bulletVelocityX, bulletVelocityY });
+	bullet.move({ bulletVelocity.x, bulletVelocity.y });
 
 	for (int i = 0; i < ledges.size(); i++) {
 
 		if (bullet.getGlobalBounds().intersects(ledges[i].getBounds())) {
-			bullet.setFillColor(sf::Color::Transparent);
+
+			bullet.setPosition(playerPosition);
+			bullet.setScale(0.f, 0.f);
 			break;
 		}
 	}
@@ -263,7 +285,9 @@ void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
 	if (bullet.getPosition().x > SCREENWIDTH ||
 		bullet.getPosition().x < 0.f ||
 		bullet.getPosition().y < 0.f) {
-		bullet.setFillColor(sf::Color::Transparent);
+		
+		bullet.setPosition(playerPosition);
+		bullet.setScale(0.f, 0.f);
 	}
 }
 
@@ -321,9 +345,9 @@ void Player::setTexture() {
 void Player::setRope(sf::Sprite grapplePoint) {
 	rope[0].position = sf::Vector2f(playerPosition);
 	rope[0].color = sf::Color::Red;
-	rope[1].position = sf::Vector2f(grapplePoint.getPosition().x, grapplePoint.getPosition().y);
+	rope[1].position = sf::Vector2f(grapplePoint.getPosition().x + (grapplePoint.getGlobalBounds().width / 4), grapplePoint.getPosition().y + (grapplePoint.getGlobalBounds().height / 4));
 	rope[1].color = sf::Color::Red;
-	rope[2].position = sf::Vector2f(grapplePoint.getPosition().x, grapplePoint.getPosition().y + 2.f);
+	rope[2].position = sf::Vector2f(grapplePoint.getPosition().x + (grapplePoint.getGlobalBounds().width / 4), grapplePoint.getPosition().y + (grapplePoint.getGlobalBounds().height / 4 + 2.f));
 	rope[2].color = sf::Color::Red;
 	rope[3].position = sf::Vector2f(playerPosition.x, playerPosition.y + 2.f);
 	rope[3].color = sf::Color::Red;
@@ -345,34 +369,26 @@ bool Player::isLeftOf(float currentPositionX, float targetPositionX) {
 
 bool Player::checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePoint) {
 	bool pathClear;
+	sf::RectangleShape path;
 
-	if (!isLeftOf(playerPosition.x, grapplePoint.getPosition().x)) {
-		distanceBetween.x = playerPosition.x - grapplePoint.getPosition().x;
-		distanceBetween.y = grapplePoint.getPosition().y - playerPosition.y;
-	} else {
-		distanceBetween.x = grapplePoint.getPosition().x - playerPosition.x;
-		distanceBetween.y = playerPosition.y - grapplePoint.getPosition().y;
-	}
+	distanceBetween.x = grapplePoint.getPosition().x - playerPosition.x;
+	distanceBetween.y = grapplePoint.getPosition().y - playerPosition.y;
 
 	distance = sqrt((distanceBetween.x * distanceBetween.x) + (distanceBetween.y * distanceBetween.y));
 	float tandistance = distanceBetween.y / distanceBetween.x;
-	sf::RectangleShape path;
+	
 	path.setSize({distance, 2.f});
 	path.setPosition(rect.getPosition());
 
-	long angle = atan(tandistance) * (180 / 3.14);
-
 	if (!isLeftOf(playerPosition.x, grapplePoint.getPosition().x)) {
-		angle = (360.f - angle) + 180.f;
+		path.setScale(-1.f, 1.f);
+	}
+	else {
+		path.setScale(1.f, 1.f);
 	}
 
-	if (isLeftOf(playerPosition.x, grapplePoint.getPosition().x)) {
-		angle = 360.f - angle;
-	}
-
-	path.setRotation(angle);
+	path.setRotation(getAngle(distanceBetween.x, distanceBetween.y));
 	sf::FloatRect bounds = path.getGlobalBounds();
-	angle = 0.f;
 
 	for (int i = 0; i < ledges.size(); i++) {
 		if (bounds.intersects(ledges[i].getBounds())) {
@@ -382,6 +398,7 @@ bool Player::checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePo
 			pathClear = true;
 		}
 	}
+	
 	return pathClear;
 }
 
@@ -444,10 +461,16 @@ void Player::setHealthBarShape() {
 
 }
 
-void Player::attack() {
+void Player::attack(std::vector<Platform> ledges, sf::RenderWindow &window) {
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::C) && !cangrapple) {
-		animation.attack = true;
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && !cangrapple) {
+		if (isBow) {
+			if (bullet.getScale().x == 0.f) {
+				animation.attack = true;
+			}
+		} else {
+			animation.attack = true;
+		}
 	}
 	if (animation.attack == true) {
 		animation.setStartEndPoints(1000, 1300);
@@ -458,5 +481,11 @@ void Player::attack() {
 			animation.setStartEndPoints(0, 300);
 			animation.switchTime = 1;
 		}
+	}
+	if (isBow) {
+		shoot(ledges, window);
+	} else {
+		bullet.setPosition(playerPosition);
+		bullet.setScale(0.f, 0.f);
 	}
 }

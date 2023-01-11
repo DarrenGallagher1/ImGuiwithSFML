@@ -17,6 +17,8 @@ private:
 	sf::Vector2f playerPosition;
 	sf::Vector2f playerVelocity;
 	sf::Vector2f distanceBetween;
+	sf::Vector2f bulletDistanceBetween;
+	sf::Vector2f bulletVelocity;
 
 	float distance;
 	float height;
@@ -24,18 +26,15 @@ private:
 	float indirVelX = 0.f;
 	float gravity = 0.7f;
 	float groundHeight = 930.f;
-	float bulletdistancex;
-	float bulletdistancey;
-	float bulletVelocityX;
-	float bulletVelocityY;
-	float ndistancex;
-	float ndistancey;
+	/*float bulletVelocityX;
+	float bulletVelocityY;*/
 	float inverseDistance;
 	float bulletInverseDistance;
 	bool lift = false;
 	bool onLedge = false;
 	bool anchored;
 	sf::Texture texture;
+	sf::Texture bulletTexture;
 	sf::Color borderColor;
 	sf::Color colour;
 	float healthBarX = 20.f;
@@ -45,18 +44,22 @@ private:
 
 	float decreaseHealth = 10.f;
 
+	sf::RectangleShape topBound;
+	sf::RectangleShape leftBound;
+	sf::RectangleShape rightBound;
+	sf::RectangleShape bottomBound;
+
 public:
 	sf::RectangleShape healthBar;
 	bool cangrapple = false;
 	bool grappletopoint = false;
 	bool shot = false;
 	bool ropeGrow = false;
-	sf::RectangleShape bullet;
-	
-	sf::RectangleShape topBound;
-	sf::RectangleShape leftBound;
-	sf::RectangleShape rightBound;
-	sf::RectangleShape bottomBound;
+	bool isPick = true;
+	bool isBow = false;
+	bool isAxe = false;
+	bool isGrappling = false;
+	sf::Sprite bullet;
 	sf::RectangleShape hurtBox;
 	Animation animation;
 	sf::RectangleShape rect;
@@ -66,10 +69,12 @@ public:
 	void setPosition(float x, float y);
 	float getPositionX();
 	float getPositionY();
+	sf::Vector2f getPosition();
 	void setSize(float w, float h);
 	float getWidth();
 	float getHeight();
 	float getGroundHeight();
+	float getAngle(float sideX, float sideY);
 	void setAnchor(bool anchor);
 	bool getAnchor();
 	bool isLeftOf(float currentPositionX,float targetPositionX);
@@ -87,7 +92,7 @@ public:
 	float getInversedDistance();
 
 	void jump();
-	void update(sf::RenderWindow& window);
+	void update(std::vector<Platform> ledges, sf::RenderWindow& window);
 	void movePlayer();
 	sf::FloatRect getBounds();
 	sf::RectangleShape getShape();
@@ -103,7 +108,7 @@ public:
 	void drawRope(sf::RenderWindow& window);
 	bool checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePoint);
 	void checkDoor(Level& level);
-	void attack();
+	void attack(std::vector<Platform> ledges, sf::RenderWindow &window);
 
 	float getHealthBarPositionX();
 	float getHealthBarPositionY();
@@ -118,7 +123,7 @@ public:
 		setPosition(posx, posy);
 		setSize(width, height);
 		animation.setFileName(fileName);
-		animation.setAnimation(0.f, 0.f, width, height, 300.f);
+		animation.setAnimation(0, 0, width, height, 300);
 		setTexture();
 		rect.setTexture(&texture);
 		setShape();
@@ -134,7 +139,9 @@ public:
 		leftBound.setFillColor(sf::Color::Transparent);
 		rightBound.setFillColor(sf::Color::White);
 		bottomBound.setFillColor(sf::Color::White);
-		bullet.setFillColor(sf::Color::Transparent);
+		bulletTexture.loadFromFile("assets/arrow.png");
+		bullet.setTexture(bulletTexture);
+		//bullet.setFillColor(sf::Color::Transparent);
 	}
 };
 
