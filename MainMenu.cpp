@@ -111,6 +111,7 @@ void MainMenu::changeEquipment(Player& player, sf::Vector2f tracker) {
 		player.isAxe = false;
 		player.isGrappling = false;
 		player.animation.coordinates.top = 0;
+		inventory = false;
 		std::cout << "PICK";
 	}
 	if (Square2.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -120,6 +121,7 @@ void MainMenu::changeEquipment(Player& player, sf::Vector2f tracker) {
 		player.isGrappling = false;
 
 		player.animation.coordinates.top = 80;
+		inventory = false;
 		std::cout << "BOW";
 	}
 	if (Square3.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -128,6 +130,7 @@ void MainMenu::changeEquipment(Player& player, sf::Vector2f tracker) {
 		player.isAxe = true;
 		player.isGrappling = false;
 		player.animation.coordinates.top = 160;
+		inventory = false;
 		std::cout << "AXE";
 
 	}
@@ -136,6 +139,7 @@ void MainMenu::changeEquipment(Player& player, sf::Vector2f tracker) {
 		player.isBow = false;
 		player.isAxe = false;
 		player.isGrappling = true;
+		inventory = false;
 		std::cout << "GRAPPLING";
 	}
 }

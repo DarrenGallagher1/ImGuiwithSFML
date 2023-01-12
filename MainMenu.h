@@ -16,6 +16,7 @@ public:
 	void clear();
 	int optionSelectedMenu;
 	int pageNum = 0;
+	bool inventory = false;
 	sf::RectangleShape Square1;
 	sf::RectangleShape Square2;
 	sf::RectangleShape Square3;

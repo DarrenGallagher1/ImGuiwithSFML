@@ -45,7 +45,7 @@ int main() {
             menu.mainMenuControls(window);
 
             if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::I) {
-                Inventory = !Inventory;
+                menu.inventory = !menu.inventory;
             }
 
             if (event.type == sf::Event::MouseButtonPressed && dwarf.bullet.getScale().x == 0.f) {
@@ -74,7 +74,7 @@ int main() {
 
 
 
-        if (!Inventory) {
+        if (!menu.inventory) {
 
             if (menu.pageNum == 0) {
                 menu.setMainMenu(window);
@@ -181,7 +181,7 @@ int main() {
             }
         }
 
-        if (Inventory) {
+        if (menu.inventory) {
             window.clear();
 
             sf::Vector2i position = sf::Mouse::getPosition(window);
