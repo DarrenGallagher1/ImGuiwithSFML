@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "SFML/Graphics.hpp"
+#include "SFML/Audio.hpp"
 #include "Platform.h"
 #include "Animation.h"
 #include "Level.h"
@@ -27,8 +28,6 @@ private:
 	float gravity = 0.7f;
 	float groundHeight = 930.f;
 	float direction;
-	/*float bulletVelocityX;
-	float bulletVelocityY;*/
 	float inverseDistance;
 	float bulletInverseDistance;
 	bool lift = false;
@@ -91,24 +90,25 @@ public:
 	void setDistanceBetween(sf::Vector2f targetPosition);
 	sf::Vector2f getDistanceBetween();
 	float getInversedDistance();
-	void checkForSpikes(Level level);
+	void checkForSpikes(std::vector<Platform> deathZones);
 
 	void jump();
-	void update(Level level, sf::RenderWindow& window);
+	void update(std::vector<Platform> platforms, std::vector<Platform> deathZones, sf::RenderWindow& window);
 	void movePlayer();
 	sf::FloatRect getBounds();
 	sf::RectangleShape getShape();
 	void setIndirVelX(float vel);
-	void grapple(sf::Sprite grapplePoint, float direction);
+	void grapple(sf::Sprite grapplePoint);
 	bool getOnLedge();
 	void setOnLedge(bool onLedge);
 	void anchor(Platform platform);
 	void setShapeColour(sf::Color colour);
+	void setShot(sf::Event event, sf::RenderWindow &window);
 	void shoot(std::vector<Platform> ledges, sf::RenderWindow& window);
 	void checkBounds(std::vector<Platform> platforms);
 	void setRope(sf::Sprite grapplePoint);
 	void drawRope(sf::RenderWindow& window);
-	void initiateGrapple(Level level, sf::Sprite &grapplePoint, sf::RenderWindow &window);
+	void initiateGrapple(std::vector<sf::Sprite> grapplePoints, std::vector<Platform> platforms ,sf::Sprite &grapplePoint, sf::RenderWindow &window);
 	bool checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePoint);
 	void checkDoor(Level& level);
 	void attack(std::vector<Platform> ledges, sf::RenderWindow &window);
@@ -146,7 +146,6 @@ public:
 		bottomBound.setFillColor(sf::Color::White);
 		bulletTexture.loadFromFile("assets/arrow.png");
 		bullet.setTexture(bulletTexture);
-		//bullet.setFillColor(sf::Color::Transparent);
 	}
 };
 

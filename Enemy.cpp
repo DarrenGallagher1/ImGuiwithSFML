@@ -57,13 +57,13 @@ bool Enemy::getDirection() {
 void Enemy::setDirection(float pointA, float pointB)
 {
 	setScaleValues(3.f, 3.f);
-	if (enemyRect.getPosition().x <= pointA) {
+	if (enemyRect.getPosition().x < pointA) {
 		direction = true;
 		animation.flipped = false;
 		setScaleValues(3.f, 3.f);
 	}
 
-	if (enemyRect.getPosition().x >= pointB) {
+	if (enemyRect.getPosition().x > pointB) {
 		direction = false;
 		animation.flipped = true;
 		setScaleValues(-3.f, 3.f);

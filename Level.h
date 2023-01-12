@@ -3,6 +3,7 @@ class Enemy;
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "SFML/Graphics.hpp"
+#include "SFML/Audio.hpp"
 #include "Platform.h"
 #include <vector>
 
@@ -11,6 +12,7 @@ class Level
 
 private:
 	Enemy* enemy;
+	
 
 public:
 	std::vector<Platform> platforms;
@@ -18,6 +20,8 @@ public:
 	std::vector<sf::Sprite> grapplePoints;
 	float winWidth = 1800.f;
 	float winHeight = 1013.f;
+	std::string musicFileName;
+	sf::Music music;
 	sf::Sprite lever;
 	sf::Sprite door;
 	sf::Sprite background;
@@ -45,5 +49,6 @@ public:
 	void setDoor(float posx, float posy);
 	void setGrapplePoints();
 	void setBackground(std::string fileName);
+	void setMusic(std::string fileName);
 };
 

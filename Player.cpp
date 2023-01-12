@@ -78,7 +78,7 @@ void Player::setGrappleVelocity(float velx, float vely) {
 void Player::jump() {
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && playerVelocity.y == 0 && lift == true) {
-		playerVelocity.y = -15.f;
+		playerVelocity.y = -16.f;
 		lift = false;
 		onLedge = false;
 		indirVelX = 0.f;
@@ -110,11 +110,11 @@ void Player::movePlayer() {
 	hurtBox.setPosition(playerPosition.x + (rect.getGlobalBounds().width / 4), playerPosition.y + (rect.getGlobalBounds().height / 4));
 }
 
-void Player::update(Level level, sf::RenderWindow& window) {
+void Player::update(std::vector<Platform> platforms, std::vector<Platform> deathZones, sf::RenderWindow& window) {
 	jump();
 	movePlayer();
-	checkForSpikes(level);
-	attack(level.platforms, window);
+	checkForSpikes(deathZones);
+	attack(platforms, window);
 	animation.Animate(rect, animation.switchTime);
 	window.draw(rect);
 	/*window.draw(topBound);
@@ -189,25 +189,25 @@ void Player::anchor(Platform platform) {
 		}
 }
 
-void Player::initiateGrapple(Level level, sf::Sprite &grapplePoint, sf::RenderWindow &window) {
+void Player::initiateGrapple(std::vector<sf::Sprite> grapplePoints, std::vector<Platform> platforms, sf::Sprite &grapplePoint, sf::RenderWindow &window) {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !cangrapple) {
 
-		for (int i = 0; i < level.grapplePoints.size(); i++) {
+		for (int i = 0; i < grapplePoints.size(); i++) {
 			sf::Vector2i clickPosition = sf::Mouse::getPosition(window);
 			sf::Vector2f tracker = window.mapPixelToCoords(clickPosition);
 
-			if (level.grapplePoints[i].getGlobalBounds().contains(tracker)) {
+			if (grapplePoints[i].getGlobalBounds().contains(tracker)) {
 				cangrapple = true;
 				grappletopoint = true;
-				grapplePoint = level.grapplePoints[i];
+				grapplePoint = grapplePoints[i];
 				grapplePoint.setOrigin(grapplePoint.getGlobalBounds().width / 2, grapplePoint.getGlobalBounds().height / 2);
 				break;
 			}
 		}
 
 		if (getPositionY() > grapplePoint.getPosition().y) {
-			if (!checkGrapplePath(level.platforms, grapplePoint)) {
+			if (!checkGrapplePath(platforms, grapplePoint)) {
 				cangrapple = false;
 				grappletopoint = false;
 			}
@@ -226,7 +226,7 @@ void Player::initiateGrapple(Level level, sf::Sprite &grapplePoint, sf::RenderWi
 }
 
 //grapple physics. need to take a snapshot of the hypotenuse and then pass into method. A seperate method might be needed
-void Player::grapple(sf::Sprite grapplePoint, float direction) {
+void Player::grapple(sf::Sprite grapplePoint) {
 
 	if (cangrapple) {
 
@@ -273,6 +273,22 @@ float Player::getAngle(float sideX, float sideY) {
 	float angle = atan(tanOfSides) * (180 / 3.14159);
 
 	return angle;
+}
+
+void Player::setShot(sf::Event event, sf::RenderWindow &window) {
+	if (event.type == sf::Event::MouseButtonPressed && bullet.getScale().x == 0.f) {
+		if (!animation.flipped) {
+			if (event.mouseButton.button == sf::Mouse::Right && sf::Mouse::getPosition(window).x < playerPosition.x && isBow) {
+				shot = true;
+			}
+		}
+
+		if (animation.flipped) {
+			if (event.mouseButton.button == sf::Mouse::Right && sf::Mouse::getPosition(window).x > playerPosition.x && isBow) {
+				shot = true;
+			}
+		}
+	}
 }
 
 void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
@@ -531,10 +547,10 @@ void Player::setHealthToMax() {
 	playerHealth.x = 100.f;
 }
 
-void Player::checkForSpikes(Level level) {
+void Player::checkForSpikes(std::vector<Platform> deathZones) {
 
-	for (int i = 0; i < level.deathZone.size(); i++) {
-		if (rect.getGlobalBounds().intersects(level.deathZone[i].getBounds())) {
+	for (int i = 0; i < deathZones.size(); i++) {
+		if (rect.getGlobalBounds().intersects(deathZones[i].getBounds())) {
 			killPlayer();
 		}
 	}

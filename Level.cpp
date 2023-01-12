@@ -41,6 +41,7 @@ void Level::buildLevelOnePlatforms() {
 
     if (levelSwitch) {
         setBackground("assets/lvl1.png");
+        setMusic("assets/assets_level1.ogg");
         levelSwitch = false;
         leverPulled = false;
     }
@@ -80,6 +81,7 @@ void Level::buildLevelTwoPlatforms() {
 
    if (levelSwitch) {
        setBackground("assets/lvl2.png");
+       setMusic("assets/assets_level2.ogg");
        leverPulled = false;
        levelSwitch = false;
    }
@@ -103,6 +105,7 @@ void Level::buildLevelThreePlatforms(Enemy &enemy) {
 
     if (levelSwitch) {
         setBackground("assets/lvl3.png");
+        setMusic("assets/assets_level3.ogg");
         leverPulled = false;
         levelSwitch = false;
         enemy.setRectSize(48, 64);
@@ -110,7 +113,6 @@ void Level::buildLevelThreePlatforms(Enemy &enemy) {
         enemy.animation.setFileName("assets/monster.png");
         enemy.animation.setAnimation(0, 0, enemy.getWidth(), enemy.getHeight(), 92);
         enemy.setTexture();
-        //enemy.enemyRect.setTexture(&enemy.getTexture());
         enemy.enemyRect.setOrigin(24, 32);
         enemy.setEnemyShape();
     }
@@ -188,4 +190,11 @@ void Level::setBackground(std::string fileName) {
     backgroundTexture.loadFromFile(fileName);
     background.setTexture(backgroundTexture);
     background.setPosition(0.f, 0.f);
+}
+
+void Level::setMusic(std::string musicFileName) {
+    music.openFromFile(musicFileName);
+    music.setLoop(true);
+    music.setVolume(10.f);
+    music.play();
 }

@@ -42,37 +42,21 @@ int main() {
                 window.close();
             }
 
-            menu.mainMenuControls(window);
-
             if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::I) {
                 menu.inventory = !menu.inventory;
-            }
-
-            if (event.type == sf::Event::MouseButtonPressed && dwarf.bullet.getScale().x == 0.f) {
-                if (!dwarf.animation.flipped) {
-                    if (event.mouseButton.button == sf::Mouse::Right && sf::Mouse::getPosition(window).x < dwarf.getPositionX() && dwarf.isBow) {
-                        dwarf.shot = true;
-                    }
-                }
-
-                if (dwarf.animation.flipped) {
-                    if (event.mouseButton.button == sf::Mouse::Right && sf::Mouse::getPosition(window).x > dwarf.getPositionX() && dwarf.isBow) {
-                        dwarf.shot = true;
-                    }
-                }
             }
 
             if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Enter) {
                 level.levelSwitch = true;
             }
 
+            menu.mainMenuControls(window);
+            dwarf.setShot(event, window);
         }
 
         ImGui::SFML::Update(window, deltaClock.restart());
 
         window.clear();
-
-
 
         if (!menu.inventory) {
 
@@ -108,7 +92,7 @@ int main() {
 
                 level.draw(window);
 
-                dwarf.initiateGrapple(level, grapplePoint, window);
+                dwarf.initiateGrapple(level.grapplePoints, level.platforms, grapplePoint, window);
 
                 enemy.moveEnemyX(100.f, winWidth - 100.f);
                 enemy.enemyCollision(dwarf);
@@ -116,12 +100,12 @@ int main() {
 
                 //dwarf.shoot(level.platforms, window);
                 dwarf.checkBounds(level.platforms);
-                dwarf.update(level, window);
+                dwarf.update(level.platforms, level.deathZone, window);
                 window.draw(dwarf.bullet);
                 window.draw(dwarf.healthBar);
 
                 if (dwarf.cangrapple) {
-                    dwarf.grapple(grapplePoint, direction);
+                    dwarf.grapple(grapplePoint);
                 }
 
                 if (dwarf.rect.getGlobalBounds().intersects(level.lever.getGlobalBounds())) {
