@@ -26,6 +26,7 @@ private:
 	float indirVelX = 0.f;
 	float gravity = 0.7f;
 	float groundHeight = 930.f;
+	float direction;
 	/*float bulletVelocityX;
 	float bulletVelocityY;*/
 	float inverseDistance;
@@ -90,9 +91,10 @@ public:
 	void setDistanceBetween(sf::Vector2f targetPosition);
 	sf::Vector2f getDistanceBetween();
 	float getInversedDistance();
+	void checkForSpikes(Level level);
 
 	void jump();
-	void update(std::vector<Platform> ledges, sf::RenderWindow& window);
+	void update(Level level, sf::RenderWindow& window);
 	void movePlayer();
 	sf::FloatRect getBounds();
 	sf::RectangleShape getShape();
@@ -106,6 +108,7 @@ public:
 	void checkBounds(std::vector<Platform> platforms);
 	void setRope(sf::Sprite grapplePoint);
 	void drawRope(sf::RenderWindow& window);
+	void initiateGrapple(Level level, sf::Sprite &grapplePoint, sf::RenderWindow &window);
 	bool checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePoint);
 	void checkDoor(Level& level);
 	void attack(std::vector<Platform> ledges, sf::RenderWindow &window);
@@ -116,6 +119,8 @@ public:
 	float getDecreaseHealth();
 	sf::Vector2f getPlayerHealth();
 	void setPlayerHealth();
+	void setHealthToMax();
+	void killPlayer();
 
 	void setHealthBarShape();
 

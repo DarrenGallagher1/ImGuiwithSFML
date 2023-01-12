@@ -23,21 +23,22 @@ public:
 	sf::RectangleShape Square4;
 	sf::RectangleShape Square5;
 	sf::RectangleShape Square6;
+
+	//Game Over Screen
 	sf::RectangleShape Square7;
 	sf::RectangleShape Square8;
-	sf::RectangleShape Square9;
-	sf::RectangleShape Square10;
-	sf::RectangleShape Square11;
 
 	sf::Sprite mainMenuScreen;
 	sf::Sprite inventoryScreen;
 	sf::Sprite controlsScreen;
+	sf::Sprite gameOverScreen;
 	sf::Sprite pickaxe;
 	sf::Sprite bow;
 	sf::Sprite axe;
 	sf::Sprite grappleHook;
 
 	sf::Texture textureScreen, texturePickaxe, textureBow, textureAxe, textureGrappleHook, textureControlMenu, textureMainMenu;
+	sf::Texture textureGameOverScreen;
 
 	int keyPressed()
 	{
@@ -58,6 +59,10 @@ public:
 
 	void mainMenuControls(sf::RenderWindow& window);
 
+	void setGameOverScreen(sf::RenderWindow& window, Player &player);
+
+	void triggerGameOver(Player player);
+
 	MainMenu()
 	{
 
@@ -68,12 +73,25 @@ public:
 		Square5.setSize({ 211, 118 });
 		Square6.setSize({ 160, 155 });
 
+		//Game Over
+		Square7.setSize({ 211, 118 });
+		Square8.setSize({ 211, 118 });
+
 		Square1.setFillColor(sf::Color::Transparent);
 		Square2.setFillColor(sf::Color::Transparent);
 		Square3.setFillColor(sf::Color::Transparent);
 		Square4.setFillColor(sf::Color::Transparent);
 		Square5.setFillColor(sf::Color::Transparent);
 		Square6.setFillColor(sf::Color::Transparent);
+
+		//Game Over
+		Square7.setFillColor(sf::Color::White);
+		Square8.setFillColor(sf::Color::White);
+
+		//Game Over
+		Square7.setPosition({ 200, 500 });
+		Square8.setPosition({ 700, 500 });
+
 
 
 		if (!font.loadFromFile("assets/blacknorthfont.otf")) {}
@@ -85,6 +103,7 @@ public:
 		textureGrappleHook.loadFromFile("assets/grappling_hook.png");
 		textureControlMenu.loadFromFile("assets/Controlls.png");
 		textureMainMenu.loadFromFile("assets/Menu.png");
+		textureGameOverScreen.loadFromFile("assets/gameoverimgmain.jpg");
 
 
 		// play 

@@ -108,36 +108,7 @@ int main() {
 
                 level.draw(window);
 
-                if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !dwarf.cangrapple && dwarf.getPositionY() > grapplePoint.getPosition().y) {
-
-                    for (int i = 0; i < level.grapplePoints.size(); i++) {
-                        sf::Vector2i clickPosition = sf::Mouse::getPosition(window);
-                        sf::Vector2f tracker = window.mapPixelToCoords(clickPosition);
-
-                        if (level.grapplePoints[i].getGlobalBounds().contains(tracker)) {
-                            dwarf.cangrapple = true;
-                            dwarf.grappletopoint = true;
-                            grapplePoint = level.grapplePoints[i];
-                            grapplePoint.setOrigin(grapplePoint.getGlobalBounds().width / 2, grapplePoint.getGlobalBounds().height / 2);
-                            break;
-                        }
-                    }
-
-                    if (!dwarf.checkGrapplePath(level.platforms, grapplePoint)) {
-                        dwarf.cangrapple = false;
-                        dwarf.grappletopoint = false;
-                    }
-
-                    if (dwarf.getPositionX() > grapplePoint.getPosition().x) {
-                        direction = -1.f;
-                        dwarf.animation.flipped = false;
-                    }
-                    else {
-                        direction = 1.f;
-                        dwarf.animation.flipped = true;
-                    }
-
-                }
+                dwarf.initiateGrapple(level, grapplePoint, window);
 
                 enemy.moveEnemyX(100.f, winWidth - 100.f);
                 enemy.enemyCollision(dwarf);
@@ -145,7 +116,7 @@ int main() {
 
                 //dwarf.shoot(level.platforms, window);
                 dwarf.checkBounds(level.platforms);
-                dwarf.update(level.platforms, window);
+                dwarf.update(level, window);
                 window.draw(dwarf.bullet);
                 window.draw(dwarf.healthBar);
 
@@ -169,8 +140,9 @@ int main() {
                 }
 
                 ImGui::End;
-
                 ImGui::SFML::Render(window);
+
+                menu.triggerGameOver(dwarf);
 
                 //std::cout << level.levelOneComplete << " "<< pageNum << " " << level.levelTwoComplete << std::endl;
                 window.display();
@@ -178,6 +150,10 @@ int main() {
 
             else if (menu.pageNum == 1) {
                 menu.setControlsMenu(window);
+            }
+
+            else if (menu.pageNum == 4) {
+                menu.setGameOverScreen(window, dwarf);
             }
         }
 

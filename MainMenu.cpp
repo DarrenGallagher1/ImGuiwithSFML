@@ -206,5 +206,34 @@ void MainMenu::mainMenuControls(sf::RenderWindow& window) {
 	{
 		pageNum = 0;
 	}
+}
 
+void MainMenu::setGameOverScreen(sf::RenderWindow& window, Player &player) {
+	window.clear();
+	gameOverScreen.setTexture(textureGameOverScreen);
+
+	sf::Vector2i position = sf::Mouse::getPosition(window);
+	sf::Vector2f tracker = window.mapPixelToCoords(position);
+
+	window.draw(gameOverScreen);
+	window.draw(Square7);
+	window.draw(Square8);
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && Square7.getGlobalBounds().contains(tracker)) {
+		player.setHealthToMax();
+		player.setPosition(200, 860);
+		pageNum = 0;
+	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && Square8.getGlobalBounds().contains(tracker)) {
+		window.close();
+	}
+
+	window.display();
+}
+
+void MainMenu::triggerGameOver(Player player) {
+	if (player.getPlayerHealth().x <= 0.f) {
+		pageNum = 4;
+	}
 }
