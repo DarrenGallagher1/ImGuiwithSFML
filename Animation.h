@@ -11,8 +11,8 @@ public:
 	sf::IntRect coordinates;
 	int coordinateWidth, coordinateHeight;
 	int startPoint, startY, endPoint, incrementFrame, row;
-	float time = 0.1;
-	float switchTime = 0.8;
+	float time = 0.1f;
+	float switchTime = 0.8f;
 	float totalTime;
 	bool flipped;
 	bool attack;

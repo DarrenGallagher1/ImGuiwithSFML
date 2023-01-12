@@ -2,6 +2,7 @@
 #include "SFML/Graphics.hpp"
 #include "Animation.h"
 #include "Player.h"
+#include "Enemy.h"
 #include <iostream>
 #define Max_Main_Menu 3
 #define Min_Main_Menu 0
@@ -36,9 +37,10 @@ public:
 	sf::Sprite bow;
 	sf::Sprite axe;
 	sf::Sprite grappleHook;
+	sf::Sprite victoryScreen;
 
 	sf::Texture textureScreen, texturePickaxe, textureBow, textureAxe, textureGrappleHook, textureControlMenu, textureMainMenu;
-	sf::Texture textureGameOverScreen;
+	sf::Texture textureGameOverScreen, textureVictoryScreen;
 
 	int keyPressed()
 	{
@@ -59,9 +61,13 @@ public:
 
 	void mainMenuControls(sf::RenderWindow& window);
 
-	void setGameOverScreen(sf::RenderWindow& window, Player &player);
+	void setGameOverScreen(sf::RenderWindow& window, Player &player, Level &level);
 
-	void triggerGameOver(Player player);
+	void triggerGameOver(Player player, Level &level);
+
+	void setVictoryScreen(sf::RenderWindow& window, Enemy& enemy, Player& player, Level& level);
+
+	void triggerGameFinished(Enemy enemy, Level& level);
 
 	MainMenu()
 	{

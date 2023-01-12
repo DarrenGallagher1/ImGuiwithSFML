@@ -1,17 +1,14 @@
 #include "Enemy.h"
 
-float Enemy::getPositionX()
-{
+float Enemy::getPositionX() {
 	return positionX;
 }
 
-float Enemy::getPositionY()
-{
+float Enemy::getPositionY() {
 	return positionY;
 }
 
-void Enemy::setPosition(float x, float y)
-{
+void Enemy::setPosition(float x, float y) {
 	this->positionX = x;
 	this->positionY = y;
 }
@@ -24,8 +21,7 @@ float Enemy::getHeight() {
 	return height;
 }
 
-void Enemy::setRectSize(float w, float h)
-{
+void Enemy::setRectSize(float w, float h) {
 	this->width = w;
 	this->height = h;
 }
@@ -39,14 +35,12 @@ void Enemy::flippedRect() {
 	}
 }
 
-void Enemy::setEnemyShape()
-{
+void Enemy::setEnemyShape() {
 	enemyRect.setSize({ width, height });
 	enemyRect.setPosition({ positionX, positionY });
 }
 
-void Enemy::setTexture()
-{
+void Enemy::setTexture() {
 	texture.loadFromFile(animation.fileName);
 }
 
@@ -54,19 +48,25 @@ bool Enemy::getDirection() {
 	return direction;
 }
 
-void Enemy::setDirection(float pointA, float pointB)
-{
+void Enemy::setDirection(float pointA, float pointB) {
 	setScaleValues(3.f, 3.f);
-	if (enemyRect.getPosition().x < pointA) {
+	if (enemyRect.getPosition().x <= pointA) {
 		direction = true;
 		animation.flipped = false;
 		setScaleValues(3.f, 3.f);
 	}
 
-	if (enemyRect.getPosition().x > pointB) {
+	if (enemyRect.getPosition().x >= pointB) {
 		direction = false;
 		animation.flipped = true;
 		setScaleValues(-3.f, 3.f);
+	}
+
+	if (animation.flipped) {
+		setScaleValues(-3.f, 3.f);
+	}
+	else {
+		setScaleValues(3.f, 3.f);
 	}
 }
 
@@ -114,14 +114,7 @@ void Enemy::enemyCollision(Player &player) {
 		}
 		player.setPlayerHealth();
 	}
-	else {
-		if (animation.flipped) {
-			setScaleValues(-3.f, 3.f);
-		}
-		else {
-			setScaleValues(3.f, 3.f);
-		}
-	}
+
 	if (enemyRect.getGlobalBounds().intersects(player.bullet.getGlobalBounds())) {
 		setEnemyHealth();
 		setScaleValues(0.f, 0.f);
@@ -136,23 +129,20 @@ void Enemy::enemyCollision(Player &player) {
 	}
 }
 
-void Enemy::setScaleValues(float x, float y)
-{
+void Enemy::setScaleValues(float x, float y) {
 	scaleX = x;
 	scaleY = y;
 }
 
 
-void Enemy::update(sf::RenderWindow& window)
-{
+void Enemy::update(sf::RenderWindow& window) {
 	animation.Animate(enemyRect, animation.switchTime);
 	enemyRect.setScale(scaleX, scaleY);
 	window.draw(enemyRect);
 
 }
 
-Enemy::Enemy(float positionX, float positionY, float width, float height, std::string fileName, int incrementFrame, int endPoint)
-{
+Enemy::Enemy(float positionX, float positionY, float width, float height, std::string fileName, int incrementFrame, int endPoint) {
 	setPosition(positionX, positionY);
 	setRectSize(width, height);
 	animation.setFileName(fileName);

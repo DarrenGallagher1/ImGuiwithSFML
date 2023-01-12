@@ -42,20 +42,15 @@ void MainMenu::Up()
 {
 	if (optionSelectedMenu - 1 >= -1)
 	{
-
 		mainMenu[optionSelectedMenu].setFillColor(sf::Color::Black);
 		optionSelectedMenu--;
-
 
 		if (optionSelectedMenu == -1)
 		{
 			optionSelectedMenu = 2;
-
-
 		}
 		std::cout << optionSelectedMenu;
 		mainMenu[optionSelectedMenu].setFillColor(sf::Color::Red);
-
 	}
 }
 void MainMenu::clear()
@@ -172,8 +167,8 @@ void MainMenu::setControlsMenu(sf::RenderWindow& window) {
 	if (Square6.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		pageNum = 0;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && pageNum == 1)
-	{
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && pageNum == 1) {
 		pageNum = 0;
 	}
 	drawShape(window, Square6);
@@ -208,12 +203,15 @@ void MainMenu::mainMenuControls(sf::RenderWindow& window) {
 	}
 }
 
-void MainMenu::setGameOverScreen(sf::RenderWindow& window, Player &player) {
+void MainMenu::setGameOverScreen(sf::RenderWindow& window, Player &player, Level &level) {
 	window.clear();
 	gameOverScreen.setTexture(textureGameOverScreen);
 
 	sf::Vector2i position = sf::Mouse::getPosition(window);
 	sf::Vector2f tracker = window.mapPixelToCoords(position);
+
+	Square7.setPosition(279, 721);
+	Square8.setPosition(958, 721);
 
 	window.draw(gameOverScreen);
 	window.draw(Square7);
@@ -221,6 +219,11 @@ void MainMenu::setGameOverScreen(sf::RenderWindow& window, Player &player) {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && Square7.getGlobalBounds().contains(tracker)) {
 		player.setHealthToMax();
+		level.levelOneComplete = false;
+		level.levelTwoComplete = false;
+		level.levelThreeComplete = false;
+		level.levelSwitch = true;
+		level.setMusic("assets/assets_intro.ogg");
 		player.setPosition(200, 860);
 		pageNum = 0;
 	}
@@ -232,8 +235,49 @@ void MainMenu::setGameOverScreen(sf::RenderWindow& window, Player &player) {
 	window.display();
 }
 
-void MainMenu::triggerGameOver(Player player) {
-	if (player.getPlayerHealth().x <= 0.f) {
+void MainMenu::triggerGameOver(Player player, Level &level) {
+	if (player.animation.coordinates.left == 1600) {
 		pageNum = 4;
+		level.setMusic("assets/assets_death.ogg");
 	}
 }
+
+void MainMenu::setVictoryScreen(sf::RenderWindow& window, Enemy& enemy, Player& player, Level& level) {
+	window.clear();
+	victoryScreen.setTexture(textureVictoryScreen);
+	sf::Vector2i position = sf::Mouse::getPosition(window);
+	sf::Vector2f tracker = window.mapPixelToCoords(position);
+	Square7.setPosition(279, 721);
+	Square8.setPosition(958, 721);
+	Square7.setFillColor(sf::Color::Transparent);
+	Square8.setFillColor(sf::Color::Transparent);
+	window.draw(victoryScreen);
+	window.draw(Square7);
+	window.draw(Square8);
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && Square7.getGlobalBounds().contains(tracker)) {
+		level.levelOneComplete = false;
+		level.levelTwoComplete = false;
+		level.levelThreeComplete = false;
+		level.levelSwitch = true;
+		level.setMusic("assets/assets_intro.ogg");
+		player.setPosition(200, 860);
+		pageNum = 0;
+	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && Square8.getGlobalBounds().contains(tracker)) {
+		window.close();
+	}
+
+	window.display();
+}
+
+void MainMenu::triggerGameFinished(Enemy enemy, Level& level) {
+
+	for (int i = 0; i < level.enemies.size(); i++)
+	if (level.enemies[i].getEnemyHealth() <= 0.f && level.levelTwoComplete) {
+		pageNum = 5;
+		level.setMusic("assets/assets_victory.ogg");
+	}
+}
+

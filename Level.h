@@ -1,5 +1,6 @@
 #pragma once
 class Enemy;
+class Player;
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "SFML/Graphics.hpp"
@@ -12,12 +13,14 @@ class Level
 
 private:
 	Enemy* enemy;
+	Player* player;
 	
 
 public:
 	std::vector<Platform> platforms;
 	std::vector<Platform> deathZone;
 	std::vector<sf::Sprite> grapplePoints;
+	std::vector<Enemy> enemies;
 	float winWidth = 1800.f;
 	float winHeight = 1013.f;
 	std::string musicFileName;
@@ -33,7 +36,7 @@ public:
 	sf::Texture grappleStone;
 	sf::Texture backgroundTexture;
 	bool leverPulled = false;
-	bool levelSwitch = false;
+	bool levelSwitch = true;
 	bool levelOneComplete = false;
 	bool levelTwoComplete = false;
 	bool levelThreeComplete = false;
@@ -42,7 +45,7 @@ public:
 	void buildLevelTwoPlatforms();
 	void buildLevelThreePlatforms(Enemy &enemy);
 	void destroyLevel();
-	void draw(sf::RenderWindow& window);
+	void draw(sf::RenderWindow& window, Player &player);
 	void setFileName(std::string fileName);
 	void setLever(float posx, float posy);
 	void checkLever();

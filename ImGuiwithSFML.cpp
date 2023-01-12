@@ -24,7 +24,7 @@ int main() {
     window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
 
-    sf::Sprite grapplePoint;
+    sf::Sprite grapplePoint, nullGrapplePoint;
     MainMenu menu;
     Level level;
     level.setBackground("assets/lvl1.png");
@@ -73,15 +73,12 @@ int main() {
                 dwarf.checkDoor(level);
 
                 if (!level.levelOneComplete && !level.levelTwoComplete && !level.levelThreeComplete) {
-                    level.destroyLevel();
                     level.buildLevelOnePlatforms();
                 }
                 else if (level.levelOneComplete && !level.levelTwoComplete) {
-                    level.destroyLevel();
                     level.buildLevelTwoPlatforms();
                 }
                 else if (level.levelOneComplete && level.levelTwoComplete) {
-                    level.destroyLevel();
                     level.buildLevelThreePlatforms(enemy);
                 }
 
@@ -90,13 +87,15 @@ int main() {
 
                 dwarf.setVelX();
 
-                level.draw(window);
+                level.draw(window, dwarf);
 
                 dwarf.initiateGrapple(level.grapplePoints, level.platforms, grapplePoint, window);
 
-                enemy.moveEnemyX(100.f, winWidth - 100.f);
+                //std::cout << grapplePoint.getPosition().y << std::endl;
+
+                /*enemy.moveEnemyX(100.f, winWidth - 100.f);
                 enemy.enemyCollision(dwarf);
-                enemy.update(window);
+                enemy.update(window);*/
 
                 //dwarf.shoot(level.platforms, window);
                 dwarf.checkBounds(level.platforms);
@@ -105,7 +104,7 @@ int main() {
                 window.draw(dwarf.healthBar);
 
                 if (dwarf.cangrapple) {
-                    dwarf.grapple(grapplePoint);
+                    dwarf.grapple(grapplePoint, nullGrapplePoint);
                 }
 
                 if (dwarf.rect.getGlobalBounds().intersects(level.lever.getGlobalBounds())) {
@@ -126,9 +125,15 @@ int main() {
                 ImGui::End;
                 ImGui::SFML::Render(window);
 
-                menu.triggerGameOver(dwarf);
+                menu.triggerGameOver(dwarf, level);
+                menu.triggerGameFinished(level.enemies, level);
 
                 //std::cout << level.levelOneComplete << " "<< pageNum << " " << level.levelTwoComplete << std::endl;
+
+                sf::Vector2i position = sf::Mouse::getPosition(window);
+                sf::Vector2f tracker = window.mapPixelToCoords(position);
+
+                //std::cout << tracker.x << " " << tracker.y << std::endl;
                 window.display();
             }
 
@@ -137,7 +142,11 @@ int main() {
             }
 
             else if (menu.pageNum == 4) {
-                menu.setGameOverScreen(window, dwarf);
+                menu.setGameOverScreen(window, dwarf, level);
+            }
+
+            else if (menu.pageNum == 5) {
+                menu.setVictoryScreen(window, enemy, dwarf, level);
             }
         }
 

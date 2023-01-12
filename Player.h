@@ -40,6 +40,9 @@ private:
 	float healthBarX = 20.f;
 	float healthBarY = 20.f;
 
+	int immuneTime = 60;
+	int damageTime = 0;
+
 	sf::Vector2f playerHealth = sf::Vector2f(100.f, 20.f);
 
 	float decreaseHealth = 10.f;
@@ -51,6 +54,7 @@ private:
 
 public:
 	sf::RectangleShape healthBar;
+	sf::RectangleShape backBar;
 	bool cangrapple = false;
 	bool grappletopoint = false;
 	bool shot = false;
@@ -91,14 +95,13 @@ public:
 	sf::Vector2f getDistanceBetween();
 	float getInversedDistance();
 	void checkForSpikes(std::vector<Platform> deathZones);
-
 	void jump();
 	void update(std::vector<Platform> platforms, std::vector<Platform> deathZones, sf::RenderWindow& window);
 	void movePlayer();
 	sf::FloatRect getBounds();
 	sf::RectangleShape getShape();
 	void setIndirVelX(float vel);
-	void grapple(sf::Sprite grapplePoint);
+	void grapple(sf::Sprite &grapplePoint, sf::Sprite nullGrapplePoint);
 	bool getOnLedge();
 	void setOnLedge(bool onLedge);
 	void anchor(Platform platform);
@@ -112,7 +115,6 @@ public:
 	bool checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePoint);
 	void checkDoor(Level& level);
 	void attack(std::vector<Platform> ledges, sf::RenderWindow &window);
-
 	float getHealthBarPositionX();
 	float getHealthBarPositionY();
 	void setHealthBarPosition(float x, float y);
@@ -121,8 +123,8 @@ public:
 	void setPlayerHealth();
 	void setHealthToMax();
 	void killPlayer();
-
 	void setHealthBarShape();
+	void dwarfMustDieMode();
 
 	Player(float posx, float posy, float width, float height, std::string fileName) {
 		setPosition(posx, posy);
@@ -137,7 +139,7 @@ public:
 		bottomBound.setSize({ rect.getGlobalBounds().width / 2 - 10.f, 5.f });
 		leftBound.setSize({ 10.f, rect.getGlobalBounds().height / 2 });
 		rightBound.setSize({ 10.f, rect.getGlobalBounds().height / 2 });
-		hurtBox.setSize({ 10.f, 30.f });
+		hurtBox.setSize({ 5.f, 15.f });
 		hurtBox.setOrigin({ 25.f, 20.f });
 		hurtBox.setFillColor(sf::Color::White);
 		topBound.setFillColor(sf::Color::Transparent);

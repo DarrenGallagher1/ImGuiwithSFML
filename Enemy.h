@@ -3,8 +3,7 @@
 #include "SFML/Graphics.hpp"
 #include "Animation.h"
 #include "Player.h"
-
-
+#include <vector>
 
 class Enemy{
 private:
