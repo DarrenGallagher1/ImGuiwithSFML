@@ -169,6 +169,8 @@ void Player::setOnLedge(bool onLedge) {
 void Player::setDistanceBetween(sf::Vector2f targetDistance) {
 	distanceBetween.x = targetDistance.x - playerPosition.x;
 	distanceBetween.y = targetDistance.y - playerPosition.y;
+	distance = sqrt((distanceBetween.x * distanceBetween.x) + (distanceBetween.y * distanceBetween.y));
+	inverseDistance = 1.f / distance;
 }
 
 sf::Vector2f Player::getDistanceBetween() {
@@ -256,9 +258,7 @@ void Player::grapple(sf::Sprite &grapplePoint, sf::Sprite nullGrapplePoint) {
 	if (cangrapple) {
 
 		setDistanceBetween(grapplePoint.getPosition());
-		distance = sqrt((distanceBetween.x * distanceBetween.x) + (distanceBetween.y * distanceBetween.y));
-		inverseDistance = 1.f / distance;
-
+		
 		float normalisedDistanceX = distanceBetween.x * inverseDistance;
 		float normalisedDistanceY = distanceBetween.y * inverseDistance;
 		float dropoff;
@@ -292,42 +292,23 @@ void Player::grapple(sf::Sprite &grapplePoint, sf::Sprite nullGrapplePoint) {
 	}
 }
 
+void Player::setBulletDistanceBetween(sf::Vector2i targetDistance) {
+	bulletDistanceBetween.x = targetDistance.x - (bullet.getPosition().x);
+	bulletDistanceBetween.y = targetDistance.y - (bullet.getPosition().y);
 
+	float distance = sqrt((bulletDistanceBetween.x * bulletDistanceBetween.x) + (bulletDistanceBetween.y * bulletDistanceBetween.y));
+	bulletInverseDistance = 1.f / distance;
+}
 
-void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
+void Player::setBulletVelocity() {
+	float normalisedDistanceX = bulletDistanceBetween.x * bulletInverseDistance;
+	float normalisedDistanceY = bulletDistanceBetween.y * bulletInverseDistance;
 
-	if (shot && isBow) {
+	bulletVelocity.x = normalisedDistanceX * 15.f;
+	bulletVelocity.y = normalisedDistanceY * 15.f;
+}
 
-		if (animation.flipped) {
-			bullet.setPosition((playerPosition.x + rect.getGlobalBounds().width / 4), playerPosition.y);
-			bullet.setScale(1.f, 1.f);
-		} else {
-			bullet.setPosition((playerPosition.x - rect.getGlobalBounds().width / 4), playerPosition.y);
-			bullet.setScale(-1.f, 1.f);
-		}
-
-		bulletTexture.loadFromFile("assets/arrow.png");
-		bullet.setTexture(bulletTexture);
-
-		bulletDistanceBetween.x = sf::Mouse::getPosition(window).x - (bullet.getPosition().x);
-		bulletDistanceBetween.y = sf::Mouse::getPosition(window).y - (bullet.getPosition().y);
-
-		float distance = sqrt((bulletDistanceBetween.x * bulletDistanceBetween.x) + (bulletDistanceBetween.y * bulletDistanceBetween.y));
-		bulletInverseDistance = 1.f / distance;
-
-		float normalisedDistanceX = bulletDistanceBetween.x * bulletInverseDistance;
-		float normalisedDistanceY = bulletDistanceBetween.y * bulletInverseDistance;
-
-		bulletVelocity.x = normalisedDistanceX * 15.f;
-		bulletVelocity.y = normalisedDistanceY * 15.f;
-
-		bullet.setRotation(getAngle(bulletDistanceBetween.x, bulletDistanceBetween.y) - 180.f);
-
-		shot = false;
-	}
-
-	bullet.move({ bulletVelocity.x, bulletVelocity.y });
-
+void Player::checkBulletCondition(std::vector<Platform> ledges) {
 	for (int i = 0; i < ledges.size(); i++) {
 
 		if (bullet.getGlobalBounds().intersects(ledges[i].getBounds())) {
@@ -341,10 +322,34 @@ void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
 	if (bullet.getPosition().x > SCREENWIDTH ||
 		bullet.getPosition().x < 0.f ||
 		bullet.getPosition().y < 0.f) {
-		
+
 		bullet.setPosition(playerPosition);
 		bullet.setScale(0.f, 0.f);
 	}
+}
+
+void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
+
+	if (shot && isBow) {
+
+		if (animation.flipped) {
+			bullet.setPosition((playerPosition.x + rect.getGlobalBounds().width / 4), playerPosition.y);
+			bullet.setScale(1.f, 1.f);
+		} else {
+			bullet.setPosition((playerPosition.x - rect.getGlobalBounds().width / 4), playerPosition.y);
+			bullet.setScale(-1.f, 1.f);
+		}
+
+		setBulletDistanceBetween(sf::Mouse::getPosition(window));
+		setBulletVelocity();
+		bullet.setRotation(getAngle(bulletDistanceBetween.x, bulletDistanceBetween.y) - 180.f);
+
+		shot = false;
+	}
+
+	bullet.move({ bulletVelocity.x, bulletVelocity.y });
+
+	checkBulletCondition(ledges);
 }
 
 void Player::checkBounds(std::vector<Platform> platforms) {

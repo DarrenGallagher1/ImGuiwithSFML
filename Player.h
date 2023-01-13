@@ -70,59 +70,67 @@ public:
 	sf::Vertex rope[5];
 	sf::Sprite grapplePoint;
 
+	//SETTERS
 	void setPosition(float x, float y);
-	float getPositionX();
-	float getPositionY();
-	sf::Vector2f getPosition();
 	void setSize(float w, float h);
-	float getWidth();
-	float getHeight();
-	float getGroundHeight();
-	float getAngle(float sideX, float sideY);
 	void setAnchor(bool anchor);
-	bool getAnchor();
-	bool isLeftOf(float currentPositionX,float targetPositionX);
 	void setColour(sf::Color colour);
+	void setShapeColour(sf::Color colour);
 	void setShape();
 	void setTexture();
 	void setGroundHeight(float height);
 	void setVelX();
-	float getVelX();
 	void setVelY(float vely);
-	float getVelY();
 	void setGrappleVelocity(float velx, float vely);
 	void setDistanceBetween(sf::Vector2f targetPosition);
+	void setBulletDistanceBetween(sf::Vector2i targetPosition);
+	void setBulletVelocity();
+	void setIndirVelX(float vel);
+	void setOnLedge(bool onLedge);
+	void setRope(sf::Sprite grapplePoint);
+	void setShot(sf::Event event, sf::RenderWindow& window);
+	void setHealthBarShape();
+	void setHealthBarPosition(float x, float y);
+	void setPlayerHealth();
+	void setHealthToMax();
+
+	//GETTERS
+	float getPositionX();
+	float getPositionY();
+	sf::Vector2f getPosition();
+	float getWidth();
+	float getHeight();
+	float getGroundHeight();
+	float getAngle(float sideX, float sideY);
+	bool getAnchor();
+	float getVelX();
+	float getVelY();
 	sf::Vector2f getDistanceBetween();
 	float getInversedDistance();
+	bool getOnLedge();
+	float getHealthBarPositionX();
+	float getHealthBarPositionY();
+	float getDecreaseHealth();
+	sf::Vector2f getPlayerHealth();
+	sf::FloatRect getBounds();
+	sf::RectangleShape getShape();
+	
+	//PLAYER ACTION METHODS
+	bool isLeftOf(float currentPositionX,float targetPositionX);
 	void checkForSpikes(std::vector<Platform> deathZones);
 	void jump();
 	void update(std::vector<Platform> platforms, std::vector<Platform> deathZones, sf::RenderWindow& window);
 	void movePlayer();
-	sf::FloatRect getBounds();
-	sf::RectangleShape getShape();
-	void setIndirVelX(float vel);
 	void grapple(sf::Sprite &grapplePoint, sf::Sprite nullGrapplePoint);
-	bool getOnLedge();
-	void setOnLedge(bool onLedge);
 	void anchor(Platform platform);
-	void setShapeColour(sf::Color colour);
-	void setShot(sf::Event event, sf::RenderWindow &window);
 	void shoot(std::vector<Platform> ledges, sf::RenderWindow& window);
+	void checkBulletCondition(std::vector<Platform> ledges);
 	void checkBounds(std::vector<Platform> platforms);
-	void setRope(sf::Sprite grapplePoint);
 	void drawRope(sf::RenderWindow& window);
 	void initiateGrapple(std::vector<sf::Sprite> grapplePoints, std::vector<Platform> platforms ,sf::Sprite &grapplePoint, sf::RenderWindow &window);
 	bool checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePoint);
 	void checkDoor(Level& level);
 	void attack(std::vector<Platform> ledges, sf::RenderWindow &window);
-	float getHealthBarPositionX();
-	float getHealthBarPositionY();
-	void setHealthBarPosition(float x, float y);
-	float getDecreaseHealth();
-	sf::Vector2f getPlayerHealth();
-	void setPlayerHealth();
-	void setHealthToMax();
-	void setHealthBarShape();
 	void dwarfMustDieMode();
 
 	Player(float posx, float posy, float width, float height, std::string fileName) {
