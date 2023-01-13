@@ -39,9 +39,9 @@ public:
 	bool levelTwoComplete = false;
 	bool levelThreeComplete = false;
 	
-	void buildLevelOnePlatforms();
-	void buildLevelTwoPlatforms();
-	void buildLevelThreePlatforms(Enemy &enemy);
+	void buildLevelOne();
+	void buildLevelTwo();
+	void buildLevelThree(Enemy &enemy);
 	void destroyLevel();
 	void draw(sf::RenderWindow& window, Player &player);
 	void setFileName(std::string fileName);

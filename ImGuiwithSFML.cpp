@@ -42,6 +42,7 @@ int main() {
 
             if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::I) {
                 menu.inventory = !menu.inventory;
+                menu.cheatsEnabled = false;
             }
 
             if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Enter) {
@@ -71,13 +72,13 @@ int main() {
                 dwarf.checkDoor(level);
 
                 if (!level.levelOneComplete && !level.levelTwoComplete && !level.levelThreeComplete) {
-                    level.buildLevelOnePlatforms();
+                    level.buildLevelOne();
                 }
                 else if (level.levelOneComplete && !level.levelTwoComplete) {
-                    level.buildLevelTwoPlatforms();
+                    level.buildLevelTwo();
                 }
                 else if (level.levelOneComplete && level.levelTwoComplete) {
-                    level.buildLevelThreePlatforms(enemy);
+                    level.buildLevelThree(enemy);
                 }
 
                 

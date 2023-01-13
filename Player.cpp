@@ -75,29 +75,7 @@ void Player::setGrappleVelocity(float velx, float vely) {
 	playerVelocity.y = vely;
 }
 
-void Player::jump() {
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && playerVelocity.y == 0 && lift == true) {
-		playerVelocity.y = -16.f;
-		lift = false;
-		onLedge = false;
-		indirVelX = 0.f;
-	}
-
-	if (playerPosition.y > (this->groundHeight)) {
-		playerPosition.y = this->groundHeight;
-		playerVelocity.y = 0;
-		lift = true;
-		animation.switchTime = 1.0;
-	}
-
-	if (playerPosition.y < (this->groundHeight)) {
-		if (playerVelocity.y < 13.f) {
-			playerVelocity.y += gravity;
-			animation.switchTime = 0.3;
-		}
-	}
-}
 
 void Player::movePlayer() {
 	playerPosition.x += playerVelocity.x;
@@ -254,13 +232,62 @@ void Player::initiateGrapple(std::vector<sf::Sprite> grapplePoints, std::vector<
 	}
 }
 
-//grapple physics. need to take a snapshot of the hypotenuse and then pass into method. A seperate method might be needed
+void Player::jump() {
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && playerVelocity.y == 0 && lift == true) {
+		playerVelocity.y = -16.f;
+		lift = false;
+		onLedge = false;
+		indirVelX = 0.f;
+	}
+
+	if (playerPosition.y > (this->groundHeight)) {
+		playerPosition.y = this->groundHeight;
+		playerVelocity.y = 0;
+		lift = true;
+		animation.switchTime = 1.0;
+	}
+
+	if (playerPosition.y < (this->groundHeight)) {
+		if (playerVelocity.y < 13.f) {
+			playerVelocity.y += gravity;
+			animation.switchTime = 0.3;
+		}
+	}
+}
+
+void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
+
+	if (shot && isBow) {
+
+		if (animation.flipped) {
+			bullet.setPosition((playerPosition.x + rect.getGlobalBounds().width / 4), playerPosition.y);
+			bullet.setScale(1.f, 1.f);
+		}
+		else {
+			bullet.setPosition((playerPosition.x - rect.getGlobalBounds().width / 4), playerPosition.y);
+			bullet.setScale(-1.f, 1.f);
+		}
+
+		setBulletDistanceBetween(sf::Mouse::getPosition(window));
+		setBulletVelocity();
+		bullet.setRotation(getAngle(bulletDistanceBetween.x, bulletDistanceBetween.y) - 180.f);
+
+		shot = false;
+	}
+
+	bullet.move({ bulletVelocity.x, bulletVelocity.y });
+
+	checkBulletCondition(ledges);
+}
+
+//grapple physics.
 void Player::grapple() {
 
 	if (grapplePoint != nullptr) {
 
 		setDistanceBetween((*grapplePoint).getPosition());
-		
+
 		float normalisedDistanceX = distanceBetween.x * inverseDistance;
 		float normalisedDistanceY = distanceBetween.y * inverseDistance;
 		float dropoff;
@@ -330,29 +357,6 @@ void Player::checkBulletCondition(std::vector<Platform> ledges) {
 	}
 }
 
-void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
-
-	if (shot && isBow) {
-
-		if (animation.flipped) {
-			bullet.setPosition((playerPosition.x + rect.getGlobalBounds().width / 4), playerPosition.y);
-			bullet.setScale(1.f, 1.f);
-		} else {
-			bullet.setPosition((playerPosition.x - rect.getGlobalBounds().width / 4), playerPosition.y);
-			bullet.setScale(-1.f, 1.f);
-		}
-
-		setBulletDistanceBetween(sf::Mouse::getPosition(window));
-		setBulletVelocity();
-		bullet.setRotation(getAngle(bulletDistanceBetween.x, bulletDistanceBetween.y) - 180.f);
-
-		shot = false;
-	}
-
-	bullet.move({ bulletVelocity.x, bulletVelocity.y });
-
-	checkBulletCondition(ledges);
-}
 
 void Player::checkBounds(std::vector<Platform> platforms) {
 

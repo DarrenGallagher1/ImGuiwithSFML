@@ -127,7 +127,7 @@ void MainMenu::changeEquipment(Player& player, sf::Vector2f tracker) {
 	}
 
 	if (Square4.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		cheatsEnabled = !cheatsEnabled;
+		cheatsEnabled = true;
 	}
 }
 

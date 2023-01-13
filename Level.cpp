@@ -3,7 +3,7 @@
 #include "Enemy.h"
 #include "Player.h"
 
-void Level::buildLevelOnePlatforms() {
+void Level::buildLevelOne() {
     
     setLever(1644.f, 336.f);
     setDoor(113, 88);
@@ -53,7 +53,7 @@ void Level::buildLevelOnePlatforms() {
     
 }
 
-void Level::buildLevelTwoPlatforms() {
+void Level::buildLevelTwo() {
    
    setLever(1636, 510);
    setDoor(1585, 757);
@@ -98,7 +98,7 @@ void Level::buildLevelTwoPlatforms() {
    
 }
 
-void Level::buildLevelThreePlatforms(Enemy &enemy) {
+void Level::buildLevelThree(Enemy &enemy) {
     
     if (levelSwitch) {
         destroyLevel();
