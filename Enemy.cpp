@@ -136,7 +136,7 @@ void Enemy::setScaleValues(float x, float y) {
 
 
 void Enemy::update(sf::RenderWindow& window) {
-	animation.Animate(enemyRect, animation.switchTime);
+	/*animation.Animate(enemyRect, animation.switchTime);*/
 	enemyRect.setScale(scaleX, scaleY);
 	window.draw(enemyRect);
 

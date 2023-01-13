@@ -19,8 +19,7 @@ void MainMenu::draw(sf::RenderWindow& window)
 }
 
 
-void MainMenu::Down()
-{
+void MainMenu::Down() {
 	if (optionSelectedMenu + 1 <= Max_Main_Menu)
 	{
 
@@ -38,8 +37,8 @@ void MainMenu::Down()
 
 	}
 }
-void MainMenu::Up()
-{
+
+void MainMenu::Up() {
 	if (optionSelectedMenu - 1 >= -1)
 	{
 		mainMenu[optionSelectedMenu].setFillColor(sf::Color::Black);
@@ -53,8 +52,8 @@ void MainMenu::Up()
 		mainMenu[optionSelectedMenu].setFillColor(sf::Color::Red);
 	}
 }
-void MainMenu::clear()
-{
+
+void MainMenu::clear() {
 	mainMenu[0].setFillColor(sf::Color::Transparent);
 	mainMenu[1].setFillColor(sf::Color::Transparent);
 	mainMenu[2].setFillColor(sf::Color::Transparent);
@@ -80,11 +79,11 @@ void MainMenu::setInventoryMenu(sf::RenderWindow& window) {
 
 	pickaxe.setPosition(170, 115);
 	pickaxe.setScale(0.3, 0.2);
-	bow.setPosition(500, 105);
+	bow.setPosition(510, 106);
 	bow.setScale(0.8, 0.75);
-	axe.setPosition(800, 95);
+	axe.setPosition(810, 95);
 	axe.setScale(1.2, 0.75);
-	grappleHook.setPosition(1150, 105);
+	grappleHook.setPosition(1165, 95);
 	grappleHook.setScale(0.35, 0.25);
 
 	window.draw(inventoryScreen);
@@ -109,16 +108,17 @@ void MainMenu::changeEquipment(Player& player, sf::Vector2f tracker) {
 		inventory = false;
 		std::cout << "PICK";
 	}
+
 	if (Square2.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		player.isPick = false;
 		player.isBow = true;
 		player.isAxe = false;
 		player.isGrappling = false;
-
 		player.animation.coordinates.top = 80;
 		inventory = false;
 		std::cout << "BOW";
 	}
+
 	if (Square3.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		player.isPick = false;
 		player.isBow = false;
@@ -127,8 +127,8 @@ void MainMenu::changeEquipment(Player& player, sf::Vector2f tracker) {
 		player.animation.coordinates.top = 160;
 		inventory = false;
 		std::cout << "AXE";
-
 	}
+
 	if (Square4.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		player.isPick = false;
 		player.isBow = false;
@@ -171,6 +171,7 @@ void MainMenu::setControlsMenu(sf::RenderWindow& window) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && pageNum == 1) {
 		pageNum = 0;
 	}
+
 	drawShape(window, Square6);
 	window.display();
 }
@@ -184,21 +185,17 @@ void MainMenu::setMainMenu(sf::RenderWindow& window) {
 }
 
 void MainMenu::mainMenuControls(sf::RenderWindow& window) {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && pageNum == 0)
-	{
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && pageNum == 0) {
 		Down();
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && pageNum == 0)
-	{
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && pageNum == 0) {
 		Up();
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return) && pageNum == 0)
-	{
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return) && pageNum == 0) {
 		mainMenuNavigation(window);
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && pageNum == 1)
-	{
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && pageNum == 1) {
 		pageNum = 0;
 	}
 }
@@ -236,7 +233,7 @@ void MainMenu::setGameOverScreen(sf::RenderWindow& window, Player &player, Level
 }
 
 void MainMenu::triggerGameOver(Player player, Level &level) {
-	if (player.animation.coordinates.left == 1600) {
+	if (player.animation.coordinates.left == 1600 || player.getPlayerHealth().x <= 0) {
 		pageNum = 4;
 		level.setMusic("assets/assets_death.ogg");
 	}
@@ -272,12 +269,15 @@ void MainMenu::setVictoryScreen(sf::RenderWindow& window, Enemy& enemy, Player& 
 	window.display();
 }
 
-void MainMenu::triggerGameFinished(Enemy enemy, Level& level) {
+void MainMenu::triggerGameFinished(Level &level) {
 
-	for (int i = 0; i < level.enemies.size(); i++)
-	if (level.enemies[i].getEnemyHealth() <= 0.f && level.levelTwoComplete) {
-		pageNum = 5;
-		level.setMusic("assets/assets_victory.ogg");
+	for (int i = 0; i < level.enemies.size(); i++) {
+		if (level.enemies[i].getEnemyHealth() <= 0.f && level.levelTwoComplete) {
+			pageNum = 5;
+			level.setMusic("assets/assets_victory.ogg");
+		}
 	}
+
 }
+
 

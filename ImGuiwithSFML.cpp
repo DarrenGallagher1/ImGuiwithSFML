@@ -126,14 +126,14 @@ int main() {
                 ImGui::SFML::Render(window);
 
                 menu.triggerGameOver(dwarf, level);
-                menu.triggerGameFinished(level.enemies, level);
+                menu.triggerGameFinished(level);
 
                 //std::cout << level.levelOneComplete << " "<< pageNum << " " << level.levelTwoComplete << std::endl;
 
                 sf::Vector2i position = sf::Mouse::getPosition(window);
                 sf::Vector2f tracker = window.mapPixelToCoords(position);
 
-                //std::cout << tracker.x << " " << tracker.y << std::endl;
+                std::cout << tracker.x << " " << tracker.y << std::endl;
                 window.display();
             }
 

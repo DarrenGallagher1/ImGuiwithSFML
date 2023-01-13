@@ -8,14 +8,12 @@ class Player;
 #include "Platform.h"
 #include <vector>
 
-class Level
-{
+class Level {
 
 private:
 	Enemy* enemy;
 	Player* player;
 	
-
 public:
 	std::vector<Platform> platforms;
 	std::vector<Platform> deathZone;

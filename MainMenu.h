@@ -42,8 +42,7 @@ public:
 	sf::Texture textureScreen, texturePickaxe, textureBow, textureAxe, textureGrappleHook, textureControlMenu, textureMainMenu;
 	sf::Texture textureGameOverScreen, textureVictoryScreen;
 
-	int keyPressed()
-	{
+	int keyPressed() {
 		return optionSelectedMenu;
 	}
 
@@ -67,7 +66,7 @@ public:
 
 	void setVictoryScreen(sf::RenderWindow& window, Enemy& enemy, Player& player, Level& level);
 
-	void triggerGameFinished(Enemy enemy, Level& level);
+	void triggerGameFinished(Level &level);
 
 	MainMenu()
 	{
@@ -91,14 +90,14 @@ public:
 		Square6.setFillColor(sf::Color::Transparent);
 
 		//Game Over
-		Square7.setFillColor(sf::Color::White);
-		Square8.setFillColor(sf::Color::White);
+		Square7.setFillColor(sf::Color::Transparent);
+		Square8.setFillColor(sf::Color::Transparent);
 
 		//Game Over
-		Square7.setPosition({ 200, 500 });
-		Square8.setPosition({ 700, 500 });
-
-
+		Square7.setSize({ 546, 124 });
+		Square8.setSize({ 546, 124 });
+		Square7.setPosition(279, 721);
+		Square8.setPosition(958, 721);
 
 		if (!font.loadFromFile("assets/blacknorthfont.otf")) {}
 
@@ -106,11 +105,11 @@ public:
 		texturePickaxe.loadFromFile("assets/PickAxe.png");
 		textureBow.loadFromFile("assets/Bow.png");
 		textureAxe.loadFromFile("assets/axe.png");
-		textureGrappleHook.loadFromFile("assets/grappling_hook.png");
+		textureGrappleHook.loadFromFile("assets/chestOfCheats.png");
 		textureControlMenu.loadFromFile("assets/Controlls.png");
 		textureMainMenu.loadFromFile("assets/Menu.png");
-		textureGameOverScreen.loadFromFile("assets/gameoverimgmain.jpg");
-
+		textureGameOverScreen.loadFromFile("assets/gameOver.png");
+		textureVictoryScreen.loadFromFile("assets/victory.png");
 
 		// play 
 		mainMenu[0].setFont(font);

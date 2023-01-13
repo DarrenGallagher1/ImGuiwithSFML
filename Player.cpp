@@ -563,14 +563,11 @@ void Player::checkForSpikes(std::vector<Platform> deathZones) {
 
 	for (int i = 0; i < deathZones.size(); i++) {
 		if (rect.getGlobalBounds().intersects(deathZones[i].getBounds())) {
-			killPlayer();
+			playerHealth.x = 0.f;
 		}
 	}
 }
 
-void Player::killPlayer() {
-	playerHealth.x = 0.f;
-}
 
 void Player::dwarfMustDieMode() {
 	immuneTime = 0;

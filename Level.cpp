@@ -5,7 +5,6 @@
 
 void Level::buildLevelOnePlatforms() {
     
-
     setLever(1644.f, 336.f);
     setDoor(113, 88);
 
@@ -13,6 +12,7 @@ void Level::buildLevelOnePlatforms() {
         destroyLevel();
         setBackground("assets/lvl1.png");
         setMusic("assets/assets_level1.ogg");
+        enemies.emplace_back(1550.f, 880.f, 48.f, 64.f, "assets/spider.png", 48, 96);
 
         platforms.emplace_back(0, 969, winWidth, 100.f);
         platforms.emplace_back(0, 0, winWidth, 83);
@@ -47,21 +47,14 @@ void Level::buildLevelOnePlatforms() {
 
         deathZone.emplace_back(720, 543, 325, 8);
 
-        enemies.emplace_back(1550.f, 880.f, 48.f, 64.f, "assets/spider.png", 48, 96);
-
         levelSwitch = false;
         leverPulled = false;
-
-        for (int i = 0; i < enemies.size(); i++) {
-            enemies[i].animation.setAnimation(0, 0, enemies[i].getWidth(), enemies[i].getHeight(), 96);
-        }
     }
     
 }
 
 void Level::buildLevelTwoPlatforms() {
    
-
    setLever(1636, 510);
    setDoor(1585, 757);
 
@@ -69,6 +62,8 @@ void Level::buildLevelTwoPlatforms() {
        destroyLevel();
        setBackground("assets/lvl2.png");
        setMusic("assets/assets_level2.ogg");
+
+       enemies.emplace_back(1500.f, 100.f, 48.f, 64.f, "assets/werewolf.png", 48, 96);
 
        platforms.emplace_back(0, 919, 573, 86);
        platforms.emplace_back(1114, 919, 689, 86);
@@ -97,12 +92,6 @@ void Level::buildLevelTwoPlatforms() {
 
        deathZone.emplace_back(570, 1006, 552, 8);
 
-       enemies.emplace_back(1500.f, 100.f, 48.f, 64.f, "assets/werewolf.png", 48, 96);
-
-       for (int i = 0; i < enemies.size(); i++) {
-           enemies[i].animation.setAnimation(0, 0, enemies[i].getWidth(), enemies[i].getHeight(), 96);
-       }
-
        leverPulled = false;
        levelSwitch = false;
    }
@@ -111,11 +100,12 @@ void Level::buildLevelTwoPlatforms() {
 
 void Level::buildLevelThreePlatforms(Enemy &enemy) {
     
-
     if (levelSwitch) {
         destroyLevel();
         setBackground("assets/lvl3.png");
         setMusic("assets/assets_level3.ogg");
+
+        enemies.emplace_back(60.f, 860.f, 48.f, 64.f, "assets/monster.png", 48, 96);
 
         platforms.emplace_back(0, 961, 1800, 52);
         platforms.emplace_back(2, 560, 381, 101);
@@ -131,14 +121,9 @@ void Level::buildLevelThreePlatforms(Enemy &enemy) {
         grapplePoints[0].setPosition({ 540, 388 });
         grapplePoints[1].setPosition({ 1260, 388 });
 
-        enemies.emplace_back(60.f, 860.f, 48.f, 64.f, "assets/monster.png", 48, 96);
-
         leverPulled = false;
         levelSwitch = false;
 
-        for (int i = 0; i < enemies.size(); i++) {
-            enemies[i].animation.setAnimation(0, 0, enemies[i].getWidth(), enemies[i].getHeight(), 96);
-        }
     }
 }
 
@@ -171,18 +156,21 @@ void Level::draw(sf::RenderWindow& window, Player &player) {
         for (int i = 0; i < enemies.size(); i++) {
             enemies[i].moveEnemyX(1000.f, 1550.f);
             enemies[i].enemyCollision(player);
+            enemies[i].animation.Animate(enemies[i].enemyRect, enemies[i].animation.switchTime);
             enemies[i].update(window);
         }
     } else if (levelOneComplete && !levelTwoComplete && !levelThreeComplete) {
         for (int i = 0; i < enemies.size(); i++) {
             enemies[i].moveEnemyX(1400.f, 1750.f);
             enemies[i].enemyCollision(player);
+            enemies[i].animation.Animate(enemies[i].enemyRect, enemies[i].animation.switchTime);
             enemies[i].update(window);
         }
     } else if (levelOneComplete && levelTwoComplete && !levelThreeComplete) {
         for (int i = 0; i < enemies.size(); i++) {
             enemies[i].moveEnemyX(100.f, 1700.f);
             enemies[i].enemyCollision(player);
+            enemies[i].animation.Animate(enemies[i].enemyRect, enemies[i].animation.switchTime);
             enemies[i].update(window);
         }
     }

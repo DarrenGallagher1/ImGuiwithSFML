@@ -122,7 +122,6 @@ public:
 	sf::Vector2f getPlayerHealth();
 	void setPlayerHealth();
 	void setHealthToMax();
-	void killPlayer();
 	void setHealthBarShape();
 	void dwarfMustDieMode();
 
