@@ -28,6 +28,9 @@ private:
 	float decreaseHealth = 25.f;
 
 public:
+
+	bool dwarfMustDieMode = false;
+
 	Animation animation;
 
 	sf::RectangleShape enemyRect;

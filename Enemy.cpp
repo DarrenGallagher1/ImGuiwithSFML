@@ -73,9 +73,15 @@ void Enemy::setDirection(float pointA, float pointB) {
 void Enemy::setXVelocity() {
 	if (direction) {
 		velx = 2.f;
+		if (dwarfMustDieMode) {
+			velx = 50.f;
+		}
 	}
 	else {
 		velx = -2.f;
+		if (dwarfMustDieMode) {
+			velx = -50.f;
+		}
 	}
 }
 

@@ -12,6 +12,13 @@
 class Player
 {
 private:
+
+	//PLAYER DIMENSIONS
+	float distance;
+	float height;
+	float width;
+
+
 	
 	const float SCREENWIDTH = 1800.f;
 	const float SCREENHEIGHT = 1013.f;
@@ -21,9 +28,6 @@ private:
 	sf::Vector2f bulletDistanceBetween;
 	sf::Vector2f bulletVelocity;
 
-	float distance;
-	float height;
-	float width;
 	float indirVelX = 0.f;
 	float gravity = 0.7f;
 	float groundHeight = 930.f;
@@ -45,7 +49,7 @@ private:
 
 	sf::Vector2f playerHealth = sf::Vector2f(100.f, 20.f);
 
-	float decreaseHealth = 10.f;
+	
 
 	sf::RectangleShape topBound;
 	sf::RectangleShape leftBound;
@@ -53,6 +57,7 @@ private:
 	sf::RectangleShape bottomBound;
 
 public:
+	float decreaseHealth = 10.f;
 	sf::RectangleShape healthBar;
 	sf::RectangleShape backBar;
 	bool cangrapple = false;
@@ -62,13 +67,12 @@ public:
 	bool isPick = true;
 	bool isBow = false;
 	bool isAxe = false;
-	bool isGrappling = false;
 	sf::Sprite bullet;
 	sf::RectangleShape hurtBox;
 	Animation animation;
 	sf::RectangleShape rect;
 	sf::Vertex rope[5];
-	sf::Sprite grapplePoint;
+	sf::Sprite *grapplePoint;
 
 	//SETTERS
 	void setPosition(float x, float y);
@@ -87,7 +91,7 @@ public:
 	void setBulletVelocity();
 	void setIndirVelX(float vel);
 	void setOnLedge(bool onLedge);
-	void setRope(sf::Sprite grapplePoint);
+	void setRope();
 	void setShot(sf::Event event, sf::RenderWindow& window);
 	void setHealthBarShape();
 	void setHealthBarPosition(float x, float y);
@@ -121,14 +125,14 @@ public:
 	void jump();
 	void update(std::vector<Platform> platforms, std::vector<Platform> deathZones, sf::RenderWindow& window);
 	void movePlayer();
-	void grapple(sf::Sprite &grapplePoint, sf::Sprite nullGrapplePoint);
+	void grapple();
 	void anchor(Platform platform);
 	void shoot(std::vector<Platform> ledges, sf::RenderWindow& window);
 	void checkBulletCondition(std::vector<Platform> ledges);
 	void checkBounds(std::vector<Platform> platforms);
 	void drawRope(sf::RenderWindow& window);
-	void initiateGrapple(std::vector<sf::Sprite> grapplePoints, std::vector<Platform> platforms ,sf::Sprite &grapplePoint, sf::RenderWindow &window);
-	bool checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePoint);
+	void initiateGrapple(std::vector<sf::Sprite> grapplePoints, std::vector<Platform> platforms, sf::RenderWindow &window);
+	bool checkGrapplePath(std::vector<Platform> ledges);
 	void checkDoor(Level& level);
 	void attack(std::vector<Platform> ledges, sf::RenderWindow &window);
 	void dwarfMustDieMode();

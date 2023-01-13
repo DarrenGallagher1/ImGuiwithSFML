@@ -103,7 +103,6 @@ void MainMenu::changeEquipment(Player& player, sf::Vector2f tracker) {
 		player.isPick = true;
 		player.isBow = false;
 		player.isAxe = false;
-		player.isGrappling = false;
 		player.animation.coordinates.top = 0;
 		inventory = false;
 		std::cout << "PICK";
@@ -113,7 +112,6 @@ void MainMenu::changeEquipment(Player& player, sf::Vector2f tracker) {
 		player.isPick = false;
 		player.isBow = true;
 		player.isAxe = false;
-		player.isGrappling = false;
 		player.animation.coordinates.top = 80;
 		inventory = false;
 		std::cout << "BOW";
@@ -123,19 +121,13 @@ void MainMenu::changeEquipment(Player& player, sf::Vector2f tracker) {
 		player.isPick = false;
 		player.isBow = false;
 		player.isAxe = true;
-		player.isGrappling = false;
 		player.animation.coordinates.top = 160;
 		inventory = false;
 		std::cout << "AXE";
 	}
 
 	if (Square4.getGlobalBounds().contains(tracker) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		player.isPick = false;
-		player.isBow = false;
-		player.isAxe = false;
-		player.isGrappling = true;
-		inventory = false;
-		std::cout << "GRAPPLING";
+		cheatsEnabled = !cheatsEnabled;
 	}
 }
 
@@ -233,7 +225,8 @@ void MainMenu::setGameOverScreen(sf::RenderWindow& window, Player &player, Level
 }
 
 void MainMenu::triggerGameOver(Player player, Level &level) {
-	if (player.animation.coordinates.left == 1600 || player.getPlayerHealth().x <= 0) {
+	player.checkForSpikes(level.deathZone);
+	if (player.animation.coordinates.left == 1600) {
 		pageNum = 4;
 		level.setMusic("assets/assets_death.ogg");
 	}

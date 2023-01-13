@@ -18,6 +18,7 @@ public:
 	int optionSelectedMenu;
 	int pageNum = 0;
 	bool inventory = false;
+	bool cheatsEnabled = false;
 	sf::RectangleShape Square1;
 	sf::RectangleShape Square2;
 	sf::RectangleShape Square3;

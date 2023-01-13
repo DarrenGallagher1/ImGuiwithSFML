@@ -218,30 +218,31 @@ void Player::anchor(Platform platform) {
 		}
 }
 
-void Player::initiateGrapple(std::vector<sf::Sprite> grapplePoints, std::vector<Platform> platforms, sf::Sprite &grapplePoint, sf::RenderWindow &window) {
+void Player::initiateGrapple(std::vector<sf::Sprite> grapplePoints, std::vector<Platform> platforms, sf::RenderWindow &window) {
 
 	for (int i = 0; i < grapplePoints.size(); i++) {
 		sf::Vector2i clickPosition = sf::Mouse::getPosition(window);
 		sf::Vector2f tracker = window.mapPixelToCoords(clickPosition);
 
 		if (grapplePoints[i].getGlobalBounds().contains(tracker)) {
-			grapplePoint = grapplePoints[i];
-			grapplePoint.setOrigin(grapplePoint.getGlobalBounds().width / 2, grapplePoint.getGlobalBounds().height / 2);
+			grapplePoint = &grapplePoints[i];
+			(*grapplePoint).setOrigin((*grapplePoint).getGlobalBounds().width / 2, (*grapplePoint).getGlobalBounds().height / 2);
 			break;
 		}
 	}
 	
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !cangrapple && getPositionY() > grapplePoint.getPosition().y) {
+	if (grapplePoint != NULL) {
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !cangrapple && getPositionY() > (*grapplePoint).getPosition().y) {
 
-		cangrapple = true;
-		grappletopoint = true;
+			cangrapple = true;
+			grappletopoint = true;
 
-			if (!checkGrapplePath(platforms, grapplePoint)) {
+			if (!checkGrapplePath(platforms)) {
 				cangrapple = false;
 				grappletopoint = false;
 			}
 
-			if (getPositionX() > grapplePoint.getPosition().x) {
+			if (getPositionX() > (*grapplePoint).getPosition().x) {
 				direction = -1.f;
 				animation.flipped = false;
 			}
@@ -249,21 +250,22 @@ void Player::initiateGrapple(std::vector<sf::Sprite> grapplePoints, std::vector<
 				direction = 1.f;
 				animation.flipped = true;
 			}
+		}
 	}
 }
 
 //grapple physics. need to take a snapshot of the hypotenuse and then pass into method. A seperate method might be needed
-void Player::grapple(sf::Sprite &grapplePoint, sf::Sprite nullGrapplePoint) {
+void Player::grapple() {
 
-	if (cangrapple) {
+	if (grapplePoint != nullptr) {
 
-		setDistanceBetween(grapplePoint.getPosition());
+		setDistanceBetween((*grapplePoint).getPosition());
 		
 		float normalisedDistanceX = distanceBetween.x * inverseDistance;
 		float normalisedDistanceY = distanceBetween.y * inverseDistance;
 		float dropoff;
 
-		if (rect.getGlobalBounds().intersects(grapplePoint.getGlobalBounds()) && grappletopoint == true) {
+		if (rect.getGlobalBounds().intersects((*grapplePoint).getGlobalBounds()) && grappletopoint == true) {
 			grappletopoint = false;
 			dropoff = normalisedDistanceX;
 			setVelY(10.f * normalisedDistanceY);
@@ -284,7 +286,7 @@ void Player::grapple(sf::Sprite &grapplePoint, sf::Sprite nullGrapplePoint) {
 
 		if (getPositionY() >= getGroundHeight() - 1.f) {
 			cangrapple = false;
-			grapplePoint = nullGrapplePoint;
+			grapplePoint = nullptr;
 			setIndirVelX(0.f);
 		}
 
@@ -354,7 +356,6 @@ void Player::shoot(std::vector<Platform> ledges, sf::RenderWindow& window) {
 
 void Player::checkBounds(std::vector<Platform> platforms) {
 
-
 	for (int i = 0; i < platforms.size(); i++) {
 
 		if (bottomBound.getGlobalBounds().intersects(platforms[i].getBounds())) {
@@ -403,17 +404,19 @@ void Player::setTexture() {
 	texture.loadFromFile(animation.fileName);
 }
 
-void Player::setRope(sf::Sprite grapplePoint) {
-	rope[0].position = sf::Vector2f(playerPosition);
-	rope[0].color = sf::Color::Red;
-	rope[1].position = sf::Vector2f(grapplePoint.getPosition().x + (grapplePoint.getGlobalBounds().width / 4), grapplePoint.getPosition().y + (grapplePoint.getGlobalBounds().height / 4));
-	rope[1].color = sf::Color::Red;
-	rope[2].position = sf::Vector2f(grapplePoint.getPosition().x + (grapplePoint.getGlobalBounds().width / 4), grapplePoint.getPosition().y + (grapplePoint.getGlobalBounds().height / 4 + 2.f));
-	rope[2].color = sf::Color::Red;
-	rope[3].position = sf::Vector2f(playerPosition.x, playerPosition.y + 2.f);
-	rope[3].color = sf::Color::Red;
-	rope[4].position = sf::Vector2f(playerPosition.x, playerPosition.y);
-	rope[4].color = sf::Color::Red;
+void Player::setRope() {
+	if (grapplePoint != nullptr) {
+		rope[0].position = sf::Vector2f(playerPosition);
+		rope[0].color = sf::Color::Red;
+		rope[1].position = sf::Vector2f((*grapplePoint).getPosition().x + ((*grapplePoint).getGlobalBounds().width / 4), (*grapplePoint).getPosition().y + ((*grapplePoint).getGlobalBounds().height / 4));
+		rope[1].color = sf::Color::Red;
+		rope[2].position = sf::Vector2f((*grapplePoint).getPosition().x + ((*grapplePoint).getGlobalBounds().width / 4), (*grapplePoint).getPosition().y + ((*grapplePoint).getGlobalBounds().height / 4 + 2.f));
+		rope[2].color = sf::Color::Red;
+		rope[3].position = sf::Vector2f(playerPosition.x, playerPosition.y + 2.f);
+		rope[3].color = sf::Color::Red;
+		rope[4].position = sf::Vector2f(playerPosition.x, playerPosition.y);
+		rope[4].color = sf::Color::Red;
+	}
 }
 
 void Player::drawRope(sf::RenderWindow& window) {
@@ -428,20 +431,17 @@ bool Player::isLeftOf(float currentPositionX, float targetPositionX) {
 	}
 }
 
-bool Player::checkGrapplePath(std::vector<Platform> ledges, sf::Sprite grapplePoint) {
+bool Player::checkGrapplePath(std::vector<Platform> ledges) {
 	bool pathClear;
 	sf::RectangleShape path;
 
-	distanceBetween.x = grapplePoint.getPosition().x - playerPosition.x;
-	distanceBetween.y = grapplePoint.getPosition().y - playerPosition.y;
-
-	distance = sqrt((distanceBetween.x * distanceBetween.x) + (distanceBetween.y * distanceBetween.y));
+	setDistanceBetween((*grapplePoint).getPosition());
 	float tandistance = distanceBetween.y / distanceBetween.x;
 	
 	path.setSize({distance, 2.f});
 	path.setPosition(rect.getPosition());
 
-	if (!isLeftOf(playerPosition.x, grapplePoint.getPosition().x)) {
+	if (!isLeftOf(playerPosition.x, (*grapplePoint).getPosition().x)) {
 		path.setScale(-1.f, 1.f);
 	}
 	else {
@@ -568,7 +568,7 @@ void Player::checkForSpikes(std::vector<Platform> deathZones) {
 
 	for (int i = 0; i < deathZones.size(); i++) {
 		if (rect.getGlobalBounds().intersects(deathZones[i].getBounds())) {
-			playerHealth.x = 0.f;
+			animation.coordinates.left = 1600;
 		}
 	}
 }
@@ -576,4 +576,5 @@ void Player::checkForSpikes(std::vector<Platform> deathZones) {
 
 void Player::dwarfMustDieMode() {
 	immuneTime = 0;
+	playerHealth.x = 10.f;
 }
